@@ -375,7 +375,7 @@ pub async fn check_if_session_exists_with_user_id(
     true
 }
 
-// curl -XPOST -H'X-API-KEY: s0m3Purp3lH41r3dB3tch4t3myC3r3aal' localhost:8223/verify/ -d '{"session_id":"18878511144260390623306514896554247529"}'
+// curl -XPOST -H'X-API-KEY: somekey' localhost:8223/verify/ -d '{"session_id":"18878511144260390623306514896554247529"}'
 pub async fn verify_session_route(
     // name: web::Path<String>,
     mut payload: web::Payload,

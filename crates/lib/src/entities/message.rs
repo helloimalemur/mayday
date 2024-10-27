@@ -81,7 +81,7 @@ pub struct AppMessage {
     additional_details: String,
 }
 
-// curl -XPOST -H'X-API-KEY: s0m3Purp3lH41r3dB3tch4t3myC3r3aal' localhost:8223/message/ -d '{"first_name":"James","last_name":"Koonts","email":"james@koonts.net","phone":"7","message":"","additional_details":""}'
+// curl -XPOST -H'X-API-KEY: somekey' localhost:8223/message/ -d '{"first_name":"James","last_name":"Koonts","email":"james@koonts.net","phone":"7","message":"","additional_details":""}'
 pub async fn message_route(
     // name: web::Path<String>,
     mut payload: Payload,
