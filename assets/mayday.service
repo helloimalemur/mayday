@@ -1,0 +1,11 @@
+[Unit]
+Description=run next js koonts.net
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/var/www/mayday/run.sh
+
+[Install]
+WantedBy=multi-user.target

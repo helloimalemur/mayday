@@ -1,0 +1,29 @@
+volumes:
+  data:
+services:
+  mayday:
+    network_mode: "host"
+    container_name: mayday
+    hostname: mayday
+    restart: always
+    build:
+      context: ../
+      dockerfile: docker/app/Dockerfile
+    env_file:
+      - .env
+  db:
+    image: mariadb:latest
+    # https://mariadb.com/kb/en/mariadb-server-docker-official-image-environment-variables/#mariadb_user-mysql_user-mariadb_password_hash-mariadb_password-mysql_password
+    restart: always
+    build:
+      context: ../
+      dockerfile: docker/db/Dockerfile
+    env_file:
+      - .env
+    environment:
+      MARIADB_USER: maydayapp
+      MARIADB_PASSWORD: $MARIADB_APP_PASS
+      MARIADB_ROOT_PASSWORD: $MARIADB_PASS
+      MARIADB_DATABASE: $MARIADB_DB
+    ports:
+      - "3306:3306"

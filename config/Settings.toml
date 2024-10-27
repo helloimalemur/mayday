@@ -1,0 +1,30 @@
+## dev
+#frontend_enabled = "false"
+#database_url = "mysql://devuser:password@127.0.0.1/mayday"
+#database_name = "mayday"
+#backend_host = "http://127.0.0.1:8223"
+#http_service_port = "8223"
+#hash_key = "spiffy"
+
+## prod
+database_name = "mayday"
+#backend_host = "http://172.17.0.1:8223"
+backend_host = "http://127.0.0.1:8223"
+http_service_port = "8223"
+hash_key = "P3t3rJ4m3sJ0hn"
+
+discord_avatar = "Dork"
+discord_webhook = "https://discord.com/api/webhooks/"
+
+### SMTP settings ####
+smtp_enabled = "true"
+smtp_host = "smtp-relay.gmail.com"
+smtp_port = "587"
+smtp_require_auth = "true"
+smtp_username = "your@email.com"
+smtp_password = "sompass"
+smtp_from = "noreply <noreply@email.com>"
+##
+smtp_recipient_1 = "your@email.com"
+smtp_recipient_2 = "your@email.com"
+##
