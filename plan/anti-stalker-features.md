@@ -1,4 +1,4 @@
-To incorporate anti-stalker features into the app from the outset, you'll want to adjust the structure to focus on preventive and discreet safety mechanisms. Here's how you can approach it:
+To incorporate anti-stalker features into the app from the outset, we'll want to adjust the structure to focus on preventive and discreet safety mechanisms. Here's how we can approach it:
 
 ### 1. **Silent and Discreet Alerts**
    - **Modify User Interface**: Design an interface where users can silently trigger alerts. Consider features like pressing a combination of volume buttons or tapping a hidden button on the screen. These should trigger a background alert without attracting attention.

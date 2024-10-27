@@ -1,9 +1,9 @@
-Certainly! Implementing a client-side app for Android using React Native and Tailwind CSS involves several steps. Here’s a detailed guide to help you set up your project, integrate React Native with Tailwind CSS, and implement key features such as location tracking, alert triggering, and handling notifications.
+Implementing a client-side app for Android using React Native and Tailwind CSS involves several steps. Here’s a detailed guide to help we set up our project, integrate React Native with Tailwind CSS, and implement key features such as location tracking, alert triggering, and handling notifications.
 
-### 1. **Set Up Your React Native Project**
+### 1. **Set Up our React Native Project**
 
 #### **1.1 Install React Native CLI**
-Make sure you have Node.js installed. Then install the React Native CLI globally if you haven’t already:
+Make sure we have Node.js installed. Then install the React Native CLI globally if we haven’t already:
 
 ```bash
 npm install -g react-native-cli
@@ -38,8 +38,8 @@ Generate the Tailwind configuration file:
 npx tailwindcss init
 ```
 
-#### **2.2 Set Up Tailwind in Your Project**
-Create a `tailwind.config.js` file with your desired configuration (e.g., extend the default theme):
+#### **2.2 Set Up Tailwind in our Project**
+Create a `tailwind.config.js` file with our desired configuration (e.g., extend the default theme):
 
 ```js
 // tailwind.config.js
@@ -53,7 +53,7 @@ module.exports = {
 ```
 
 #### **2.3 Integrate Tailwind with React Native**
-Create a `tailwind.config.js` file in your project root and configure the theme as needed. Tailwind CSS classes can be used directly in your components with the `react-native-tailwindcss` library.
+Create a `tailwind.config.js` file in our project root and configure the theme as needed. Tailwind CSS classes can be used directly in our components with the `react-native-tailwindcss` library.
 
 ### 3. **Implement Key Features**
 
@@ -86,7 +86,7 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
    export default watchLocation;
    ```
 
-3. **Use Location Service in Your Component**:
+3. **Use Location Service in our Component**:
 
    ```js
    // src/screens/HomeScreen.js
@@ -126,7 +126,7 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
 
    const triggerAlert = async (alertType, location) => {
      try {
-       await axios.post('https://your-backend-url/alerts', {
+       await axios.post('https://our-backend-url/alerts', {
          alertType,
          location,
        });
@@ -138,7 +138,7 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
    export default triggerAlert;
    ```
 
-2. **Use Alert Service in Your Component**:
+2. **Use Alert Service in our Component**:
 
    ```js
    // src/screens/HomeScreen.js
@@ -154,7 +154,7 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
      useEffect(() => {
        watchLocation((coords) => {
          setLocation(coords);
-         if (/* your alert condition */) {
+         if (/* our alert condition */) {
            triggerAlert('alertType', coords);
          }
        });
@@ -177,9 +177,9 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
 #### **3.3 Handle Notifications**
 
 1. **Set Up Firebase**:
-   Follow the Firebase setup guide for React Native to integrate Firebase Cloud Messaging (FCM) for push notifications. Ensure you have the `google-services.json` file in your project.
+   Follow the Firebase setup guide for React Native to integrate Firebase Cloud Messaging (FCM) for push notifications. Ensure we have the `google-services.json` file in our project.
 
-2. **Configure Firebase in Your App**:
+2. **Configure Firebase in our App**:
 
    ```js
    // src/services/firebaseService.js
@@ -204,7 +204,7 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
    messaging().setBackgroundMessageHandler(backgroundMessageHandler);
    ```
 
-3. **Use Firebase Messaging in Your Component**:
+3. **Use Firebase Messaging in our Component**:
 
    ```js
    // src/screens/HomeScreen.js
@@ -234,7 +234,7 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
    export default HomeScreen;
    ```
 
-### 4. **Run Your Project**
+### 4. **Run our Project**
 
 1. **Run on Android Emulator or Device**:
 
@@ -250,4 +250,4 @@ Create a `tailwind.config.js` file in your project root and configure the theme 
 - **Optimizations**: Optimize performance for background tasks and location updates.
 - **UI/UX**: Design user interfaces using Tailwind CSS for responsive and consistent styling.
 
-This setup gives you a basic foundation to build upon. You can expand it by adding more features, improving UI/UX, and integrating additional services as needed. If you have specific requirements or run into issues, feel free to ask for further assistance!
+This setup gives we a basic foundation to build upon. we can expand it by adding more features, improving UI/UX, and integrating additional services as needed. If we have specific requirements or run into issues, feel free to ask for further assistance!

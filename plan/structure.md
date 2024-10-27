@@ -1,5 +1,3 @@
-Sure, I can help you design a mobile app with those features. Here’s a structured approach to building such an app:
-
 ### 1. **App Overview**
 
 **Purpose:**
@@ -116,4 +114,4 @@ Sure, I can help you design a mobile app with those features. Here’s a structu
 5. **User Receives Notifications:**
    - The user receives local notifications if certain conditions are met.
 
-By following this structure, you can build an app that effectively tracks user location, detects movement, and triggers appropriate alerts based on specific conditions.
+By following this structure, we can build an app that effectively tracks user location, detects movement, and triggers appropriate alerts based on specific conditions.

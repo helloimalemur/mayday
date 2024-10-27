@@ -1,4 +1,4 @@
-To notify a client of other nearby clients who are alerting, you need a system that continuously tracks the location of clients and detects when an alert is triggered. The logic for such a system involves several steps:
+To notify a client of other nearby clients who are alerting, we need a system that continuously tracks the location of clients and detects when an alert is triggered. The logic for such a system involves several steps:
 
 ### 1. **Tracking and Alerts Overview**
 

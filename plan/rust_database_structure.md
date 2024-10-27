@@ -1,4 +1,4 @@
-Certainly! Below, I'll provide the Rust struct definitions for the mobile app and the backend service, as well as a corresponding database schema. The goal is to ensure that the data model is well-structured for location tracking, alert management, and integration handling.
+Rust struct definitions for the mobile app and the backend service, as well as a corresponding database schema. The goal is to ensure that the data model is well-structured for location tracking, alert management, and integration handling.
 
 ### Rust Structs
 
@@ -135,7 +135,7 @@ CREATE TABLE integrations (
 );
 ```
 
-#### **AlertConfig Table** (Optional, if you want to store configuration in the database)
+#### **AlertConfig Table** (Optional, if we want to store configuration in the database)
 
 ```sql
 CREATE TABLE alert_configs (
@@ -151,4 +151,4 @@ CREATE TABLE alert_configs (
 - **Rust Structs**: Define the data structures for handling location updates, tracking statuses, alert configurations, and integrations.
 - **Database Schema**: Create tables to store user information, location data, alerts, and integration configurations. Optionally, an `alert_configs` table can be used to manage per-user alert settings.
 
-This structure should give you a solid foundation to implement your mobile app and backend service with Rust and a relational database.
+This structure should give we a solid foundation to implement our mobile app and backend service with Rust and a relational database.

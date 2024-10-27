@@ -1,4 +1,4 @@
-Here are some feature suggestions that align with the app’s primary goal of saving lives when people are outside alone:
+features suggestions that align with the app’s primary goal of saving lives when people are outside alone:
 
 ### 1. **Automatic Check-In**
    - **Feature**: The app could periodically ask users if they're okay, especially if it detects that they've been stationary for too long in an unusual location (e.g., not at home or work).
@@ -60,4 +60,4 @@ Here are some feature suggestions that align with the app’s primary goal of sa
    - **Feature**: Integrate with local weather data to provide alerts about extreme weather conditions, especially when users are outdoors.
    - **Why**: Protects users from unforeseen natural dangers, such as severe storms, floods, or heatwaves.
 
-These features focus on extending the core safety functions to ensure users are protected in a variety of scenarios, while also enhancing the overall functionality and user experience of the app. Which features stand out to you?
+These features focus on extending the core safety functions to ensure users are protected in a variety of scenarios, while also enhancing the overall functionality and user experience of the app. Which features stand out to us?
