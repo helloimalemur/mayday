@@ -3,6 +3,7 @@ include docker/.env
 ## start everything from scratch
 .PHONY: init
 init: build startdb dbup startmayday
+	@:
 ############################################
 ## build containers only
 .PHONY: build
@@ -43,8 +44,13 @@ down:
 ## kill containers
 .PHONY: kill
 kill: down
+	@:
 ############################################
 ## remove all everything
+.PHONY: clean
+clean: prune
+	@:
+
 .PHONY: prune
 prune: down
 	@yes|docker system prune -a
