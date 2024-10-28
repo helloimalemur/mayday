@@ -4,9 +4,9 @@ primary goal of the app is to save lives when people are outside alone, protecti
 
 ### 1. **Tracking and Alerts Overview**
 
-1. **Client Location Tracking**: Each client periodically sends its location to the backend.
+1. **Client Location Tracking**: Each client periodically sends its location to the backend, using "what3words" the location can be easily communicated verbally.
 2. **Alert Triggering**: Clients can trigger alerts based on certain conditions.
-3. **Notification of Nearby Clients**: When a client triggers an alert, nearby clients are notified.
+3. **Notification of Nearby Clients**: When a client triggers an alert, notify nearby clients and integrations such custom contacts or EMS services.
 
 ## prerequisites
     docker
