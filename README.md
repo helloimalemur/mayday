@@ -8,6 +8,22 @@ primary goal of the app is to save lives when people are outside alone, protecti
 2. **Alert Triggering**: Clients can trigger alerts based on certain conditions.
 3. **Notification of Nearby Clients**: When a client triggers an alert, nearby clients are notified.
 
+## prerequisites
+    docker
+    make
+    rust
+    npm/node
+
+## Development workflow
+    # start db in docker and run rust code 
+    make dev
+    # build and start both db and mayday in docker containers
+    make init
+    # build images only
+    make build
+    # build and up the new images
+    make up 
+
 ## docker/.env
 ```dotenv
 MARIADB_HOST=127.0.0.1
@@ -18,6 +34,6 @@ MARIADB_APP_PASS=password
 MARIADB_DB=mayday
 DATABASE_URL="mysql://$(MARIADB_USER):$(MARIADB_PASS)@$(MARIADB_HOST):$(MARIADB_PORT)/$(MARIADB_DB)"
 ```
-
-cargo install sea-orm-cli@1.0.0-rc.5
+## install sea-orm cli
+    cargo install sea-orm-cli@1.0.0-rc.5
 

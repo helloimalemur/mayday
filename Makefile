@@ -9,6 +9,11 @@ init: build startdb dbup startmayday
 build:
 	docker-compose -f docker/docker-compose.yaml create
 ############################################
+## up db and run rust code
+.PHONY: dev
+dev: startdb
+	cargo run
+############################################
 ## start containers
 .PHONY: up
 up: build
