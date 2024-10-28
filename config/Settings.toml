@@ -2,15 +2,15 @@
 #frontend_enabled = "false"
 #database_url = "mysql://devuser:password@127.0.0.1/mayday"
 #database_name = "mayday"
-#backend_host = "http://127.0.0.1:8223"
-#http_service_port = "8223"
+#backend_host = "http://127.0.0.1:8202"
+#http_service_port = "8202"
 #hash_key = "spiffy"
 
 ## prod
 database_name = "mayday"
-#backend_host = "http://172.17.0.1:8223"
-backend_host = "http://127.0.0.1:8223"
-http_service_port = "8223"
+#backend_host = "http://172.17.0.1:8202"
+backend_host = "http://127.0.0.1:8202"
+http_service_port = "8202"
 hash_key = "P3t3rJ4m3sJ0hn"
 
 discord_avatar = "Dork"

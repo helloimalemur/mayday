@@ -70,7 +70,7 @@ async fn main() {
             .allow_any_header()
             .allow_any_method()
             // .allowed_origin(base_address.as_str())
-            // .allowed_origin("http://127.0.0.1:8223")
+            // .allowed_origin("http://127.0.0.1:8202")
             // .allowed_origin(backend_host.as_str())
             // .allowed_methods(vec!["GET", "POST", "OPTIONS"])
             .max_age(3600);

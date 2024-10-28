@@ -37,7 +37,7 @@ pub struct UserRequest {
 // PRIMARY KEY (`userid`)
 // ) ENGINE=InnoDB;
 
-// curl -XPOST -H'X-API-KEY: somekey' localhost:8223/user/create/ -d '{"name":"James","email":"james@koonts.net","password":"4d23c0fa30"}'
+// curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user/create/ -d '{"name":"James","email":"james@koonts.net","password":"4d23c0fa30"}'
 pub async fn create_user_route(
     // name: web::Path<String>,
     mut payload: web::Payload,
@@ -204,7 +204,7 @@ pub async fn create_user(user: User, data: Data<Mutex<AppState>>) {
     // println!("{:#?}", query_result);
 }
 
-// curl -XPOST -H'X-API-KEY: 12790066417744034365' localhost:8223/api/delete/user/ -d '{"name":"johnny","email":"johhny@mail.com"}'
+// curl -XPOST -H'X-API-KEY: 12790066417744034365' localhost:8202/api/delete/user/ -d '{"name":"johnny","email":"johhny@mail.com"}'
 pub async fn delete_user_route(
     // name: web::Path<String>,
     mut payload: Payload,

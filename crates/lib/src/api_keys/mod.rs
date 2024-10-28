@@ -18,7 +18,7 @@ pub fn is_key_valid(key_to_test: String, keys: Vec<String>) -> bool {
     keys.contains(&key_to_test)
 }
 
-// curl -XPOST -H'X-API-KEY: 12790066417744034365' localhost:8223/api/create/
+// curl -XPOST -H'X-API-KEY: 12790066417744034365' localhost:8202/api/create/
 pub async fn create_api_key(
     // name: web::Path<String>,
     mut payload: web::Payload,
@@ -69,7 +69,7 @@ pub async fn create_api_key(
     }
 }
 
-// curl -XPOST -H'X-API-KEY: 12790066417744034365' localhost:8223/api/delete/ -d'{"api_key":"9860738100897034443"}'
+// curl -XPOST -H'X-API-KEY: 12790066417744034365' localhost:8202/api/delete/ -d'{"api_key":"9860738100897034443"}'
 pub async fn delete_api_key(
     // key: web::Path<String>,
     mut payload: web::Payload,

@@ -49,7 +49,7 @@ pub struct LogoutRequest {
 // PRIMARY KEY (`sessionid`)
 // ) ENGINE=InnoDB;
 
-// curl -XPOST -H'X-API-KEY: omganotherone' localhost:8223/login/ -d '{"email":"johhny@mail.com","password":"password"}'
+// curl -XPOST -H'X-API-KEY: omganotherone' localhost:8202/login/ -d '{"email":"johhny@mail.com","password":"password"}'
 pub async fn login_user_route(
     // name: web::Path<String>,
     mut payload: web::Payload,
@@ -215,7 +215,7 @@ async fn generate_jwt_session_id(_user_id: i16) -> String {
     temp_new_session_id.to_string()
 }
 
-// curl -XPOST -H'X-API-KEY: omganotherone' localhost:8223/logout/ -d '{"session_id":"password"}'
+// curl -XPOST -H'X-API-KEY: omganotherone' localhost:8202/logout/ -d '{"session_id":"password"}'
 pub async fn logout_user_route(
     // name: web::Path<String>,
     mut payload: web::Payload,
@@ -375,7 +375,7 @@ pub async fn check_if_session_exists_with_user_id(
     true
 }
 
-// curl -XPOST -H'X-API-KEY: somekey' localhost:8223/verify/ -d '{"session_id":"18878511144260390623306514896554247529"}'
+// curl -XPOST -H'X-API-KEY: somekey' localhost:8202/verify/ -d '{"session_id":"18878511144260390623306514896554247529"}'
 pub async fn verify_session_route(
     // name: web::Path<String>,
     mut payload: web::Payload,
