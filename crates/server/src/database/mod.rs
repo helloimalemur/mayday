@@ -18,11 +18,12 @@ pub async fn db_connect() -> Result<DatabaseConnection, DbErr> {
     let pg_user = env::var("MARIADB_USER").expect("missing MARIADB_USER");
     let pg_pass = env::var("MARIADB_PASS").expect("missing MARIADB_PASS");
     let pg_host = env::var("MARIADB_HOST").expect("missing MARIADB_HOST");
+    let pg_port = env::var("MARIADB_PORT").expect("missing MARIADB_PORT");
     let pg_db = env::var("MARIADB_DB").expect("missing MARIADB_DB");
     // let conn_string = format!("mysql://{}:{}@{}/{}", pg_user, pg_pass, pg_host, pg_db);
     let conn_string = format!(
         "mysql://{}:{}@{}:{}/{}",
-        pg_user, pg_pass, pg_host, "3306", pg_db
+        pg_user, pg_pass, pg_host, pg_port, pg_db
     );
 
     println!("Connecting to mysql database at {}", conn_string);
