@@ -3,6 +3,7 @@ use actix_web::error::ErrorBadRequest;
 use actix_web::{web, HttpRequest};
 use actix_web::web::{Data, Payload};
 use futures_util::StreamExt;
+use serde_json::Value;
 use maydaylib::appstate::AppState;
 use maydaylib::is_key_valid;
 use maydaylib::user::User;
@@ -48,7 +49,7 @@ pub async fn alert(
 
         // println!("{:?}", body);
         let mut response = "ok\n".to_string();
-        if let Ok(message) = serde_json::from_slice::<User>(&body) {
+        if let Ok(message) = serde_json::from_slice::<Value>(&body) {
             response
         } else {
             let message = format!("FAIL to deserialize: {} {} {}", req.method(), req.uri(), String::from_utf8(body.to_vec()).unwrap());

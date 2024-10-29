@@ -5,6 +5,7 @@ use actix_web::web::{Data, Payload};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
 use maydaylib::is_key_valid;
+use maydaylib::session::SessionId;
 use maydaylib::user::User;
 use crate::logger;
 use crate::logger::Header;
@@ -48,7 +49,7 @@ pub async fn session(
 
         // println!("{:?}", body);
         let mut response = "ok\n".to_string();
-        if let Ok(message) = serde_json::from_slice::<User>(&body) {
+        if let Ok(message) = serde_json::from_slice::<SessionId>(&body) {
             response
         } else {
             let message = format!("FAIL to deserialize: {} {} {}", req.method(), req.uri(), String::from_utf8(body.to_vec()).unwrap());
