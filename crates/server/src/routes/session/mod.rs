@@ -49,7 +49,7 @@ pub async fn session(
         // println!("{:?}", body);
         let mut response = "ok\n".to_string();
         if let Ok(message) = serde_json::from_slice::<User>(&body) {
-
+            response
         } else {
             let message = format!("FAIL to deserialize: {} {} {}", req.method(), req.uri(), String::from_utf8(body.to_vec()).unwrap());
             logger::log(Header::WARNING, message.as_str());
