@@ -1,4 +1,5 @@
-
+use crate::appstate::AppState;
+use crate::is_key_valid;
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::{Data, Payload};
 use actix_web::{web, HttpRequest};
@@ -6,8 +7,6 @@ use anyhow::anyhow;
 use futures_util::StreamExt;
 use sqlx::{MySql, Pool};
 use std::sync::Mutex;
-use crate::appstate::AppState;
-use crate::is_key_valid;
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Analytic {

@@ -15,8 +15,6 @@ pub fn load_keys_from_file() -> Vec<String> {
     keys
 }
 
-
-
 // #[cfg(test)]
 // mod tests {
 //     use super::*;

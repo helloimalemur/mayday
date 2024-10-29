@@ -1,4 +1,5 @@
-
+use crate::appstate::AppState;
+use crate::is_key_valid;
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::{Data, Payload};
 use actix_web::{web, HttpRequest};
@@ -7,12 +8,10 @@ use futures_util::StreamExt;
 use magic_crypt::generic_array::typenum::U256;
 use magic_crypt::MagicCryptTrait;
 use rand::Rng;
+use sea_orm::sqlx;
 use sqlx::{MySql, Pool, Row};
 use std::io::Cursor;
 use std::sync::Mutex;
-use sea_orm::sqlx;
-use crate::appstate::AppState;
-use crate::is_key_valid;
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct User {

@@ -1,13 +1,13 @@
-use std::sync::Mutex;
+use crate::logger;
+use crate::logger::Header;
 use actix_web::error::ErrorBadRequest;
-use actix_web::{web, HttpRequest};
 use actix_web::web::{Data, Payload};
+use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
 use maydaylib::is_key_valid;
 use maydaylib::user::User;
-use crate::logger;
-use crate::logger::Header;
+use std::sync::Mutex;
 
 pub async fn user(
     // name: web::Path<String>,
@@ -51,7 +51,12 @@ pub async fn user(
         if let Ok(message) = serde_json::from_slice::<User>(&body) {
             response
         } else {
-            let message = format!("FAIL to deserialize: {} {} {}", req.method(), req.uri(), String::from_utf8(body.to_vec()).unwrap());
+            let message = format!(
+                "FAIL to deserialize: {} {} {}",
+                req.method(),
+                req.uri(),
+                String::from_utf8(body.to_vec()).unwrap()
+            );
             logger::log(Header::WARNING, message.as_str());
             "invalid schema\n".to_string()
         }
