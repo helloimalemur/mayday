@@ -1,14 +1,25 @@
-use std::sync::Mutex;
+use crate::logger;
+use crate::logger::Header;
 use actix_web::error::ErrorBadRequest;
-use actix_web::{web, HttpRequest};
 use actix_web::web::{Data, Payload};
+use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
 use maydaylib::is_key_valid;
-use maydaylib::user::User;
-use crate::logger;
-use crate::logger::Header;
+use maydaylib::user::{User, UserRequest};
+use std::sync::Mutex;
 
+#[utoipa::path(
+    post,
+    path = "/user",
+    responses(
+            (status = 200, description = "Pet found successfully", body = UserRequest),
+            (status = NOT_FOUND, description = "Pet was not found")
+    ),
+    params(
+            ("id" = u64, Path, description = "Pet database id to get Pet for"),
+    )
+)]
 pub async fn user(
     // name: web::Path<String>,
     mut payload: Payload,
@@ -28,7 +39,7 @@ pub async fn user(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             auth = true;
         }
@@ -51,7 +62,12 @@ pub async fn user(
         if let Ok(message) = serde_json::from_slice::<User>(&body) {
             response
         } else {
-            let message = format!("FAIL to deserialize: {} {} {}", req.method(), req.uri(), String::from_utf8(body.to_vec()).unwrap());
+            let message = format!(
+                "FAIL to deserialize: {} {} {}",
+                req.method(),
+                req.uri(),
+                String::from_utf8(body.to_vec()).unwrap()
+            );
             logger::log(Header::WARNING, message.as_str());
             "invalid schema\n".to_string()
         }

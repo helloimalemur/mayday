@@ -1,4 +1,5 @@
-
+use crate::appstate::AppState;
+use crate::is_key_valid;
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::{Data, Payload};
 use actix_web::{web, HttpRequest};
@@ -7,14 +8,13 @@ use futures_util::StreamExt;
 use magic_crypt::generic_array::typenum::U256;
 use magic_crypt::MagicCryptTrait;
 use rand::Rng;
+use sea_orm::sqlx;
 use sqlx::{MySql, Pool, Row};
 use std::io::Cursor;
 use std::sync::Mutex;
-use sea_orm::sqlx;
-use crate::appstate::AppState;
-use crate::is_key_valid;
+use utoipa::{OpenApi, ToSchema};
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub struct User {
     pub user_id: i16,
     pub name: String,
@@ -22,7 +22,7 @@ pub struct User {
     pub password: String,
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub struct UserRequest {
     pub name: String,
     pub email: String,
@@ -54,7 +54,7 @@ pub async fn create_user_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             let mut body = web::BytesMut::new();
 
@@ -221,7 +221,7 @@ pub async fn delete_user_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             let mut body = web::BytesMut::new();
             while let Some(chunk) = payload.next().await {
@@ -283,7 +283,7 @@ pub async fn modify_user_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             "ok\n".to_string()
         } else {

@@ -1,15 +1,15 @@
+use crate::appstate::AppState;
 use crate::entities::user::{check_user_exist_with_password_hash, create_password_hash, User};
+use crate::is_key_valid;
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::Data;
 use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use rand::Rng;
+use sea_orm::{sqlx, DatabaseConnection};
 use sqlx::mysql::MySqlRow;
 use sqlx::{MySql, Pool, Row};
 use std::sync::Mutex;
-use sea_orm::{sqlx, DatabaseConnection};
-use crate::appstate::AppState;
-use crate::is_key_valid;
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 struct Session {
@@ -66,7 +66,7 @@ pub async fn login_user_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             let mut body = web::BytesMut::new();
 
@@ -232,7 +232,7 @@ pub async fn logout_user_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             let mut body = web::BytesMut::new();
 
@@ -392,7 +392,7 @@ pub async fn verify_session_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             let mut body = web::BytesMut::new();
 
@@ -442,12 +442,11 @@ mod tests {
     use crate::{load_keys_from_file, AppState};
     use actix_web::web::Data;
     use config::Config;
+    use sea_orm::sqlx::MySqlPool;
+    use sea_orm::DatabaseConnection;
     use sqlx::MySqlPool;
     use std::collections::HashMap;
     use std::sync::Mutex;
-    use sea_orm::DatabaseConnection;
-    use sea_orm::sqlx::MySqlPool;
-    use crate::appstate::AppState;
 
     #[actix_rt::test]
     pub async fn test_session_insert() {

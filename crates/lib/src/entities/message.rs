@@ -1,3 +1,5 @@
+use crate::appstate::AppState;
+use crate::is_key_valid;
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::{Data, Payload};
 use actix_web::{web, HttpRequest};
@@ -9,8 +11,6 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
-use crate::appstate::AppState;
-use crate::is_key_valid;
 // CREATE TABLE `message` (
 // `first_name` VARCHAR(255) NOT NULL,
 // `last_name` VARCHAR(255) NOT NULL,
@@ -99,7 +99,7 @@ pub async fn message_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             auth = true;
         }

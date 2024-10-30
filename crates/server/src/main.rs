@@ -1,5 +1,10 @@
 use crate::database::wait_for_db;
+use crate::routes::alert::alert;
+use crate::routes::location::location;
+use crate::routes::register::register;
 use crate::routes::root::root;
+use crate::routes::session::session;
+use crate::routes::user::user;
 use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{web, App, HttpMessage, HttpServer, Responder};
@@ -9,9 +14,10 @@ use maydaylib::load_keys_from_file;
 use maydaylib::user::{create_user_route, delete_user_route};
 use maydaylib::*;
 use pnet::datalink;
-use routes::root;
 use std::collections::HashMap;
 use std::sync::Mutex;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 mod database;
 mod logger;
@@ -64,6 +70,12 @@ async fn main() {
 
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
+    #[derive(OpenApi)]
+    #[openapi(paths(routes::user::user))]
+    struct ApiDoc;
+    let openapi = ApiDoc::openapi();
+    println!("{}", ApiDoc::openapi().to_pretty_json().unwrap());
+
     let _server = HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
@@ -79,12 +91,20 @@ async fn main() {
             .wrap(cors)
             .app_data(state.clone())
             // .wrap(api_key::ApiKey::new("".to_string()))
-            .service(web::resource("/register").post(create_user_route))
-            .service(web::resource("/user/create").post(create_user_route))
-            .service(web::resource("/user/create/").post(create_user_route))
-            .service(web::resource("/user/delete").post(delete_user_route))
-            .service(web::resource("/user/delete/").post(delete_user_route))
+            .service(web::resource("/register").post(register))
+            .service(web::resource("/register/").post(register))
+            .service(web::resource("/user").post(user))
+            .service(web::resource("/user/").post(user))
+            .service(web::resource("/session").post(session))
+            .service(web::resource("/session/").post(session))
+            .service(web::resource("/location").post(location))
+            .service(web::resource("/location/").post(location))
+            .service(web::resource("/alert").post(alert))
+            .service(web::resource("/alert/").post(alert))
             .service(web::resource("/").to(root))
+            .service(
+                SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", openapi.clone()),
+            )
         // .default_service(web::to(default_handler))
     })
     .bind(("0.0.0.0", http_service_port))

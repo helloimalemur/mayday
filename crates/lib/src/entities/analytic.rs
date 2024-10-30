@@ -1,4 +1,5 @@
-
+use crate::appstate::AppState;
+use crate::is_key_valid;
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::{Data, Payload};
 use actix_web::{web, HttpRequest};
@@ -6,8 +7,6 @@ use anyhow::anyhow;
 use futures_util::StreamExt;
 use sqlx::{MySql, Pool};
 use std::sync::Mutex;
-use crate::appstate::AppState;
-use crate::is_key_valid;
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Analytic {
@@ -44,7 +43,7 @@ pub async fn create_analytic_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             auth = true;
         }
@@ -123,7 +122,7 @@ pub async fn delete_analytic_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             "ok\n".to_string()
         } else {
@@ -152,7 +151,7 @@ pub async fn modify_analytic_route(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             "ok\n".to_string()
         } else {

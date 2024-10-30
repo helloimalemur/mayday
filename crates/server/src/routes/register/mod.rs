@@ -10,7 +10,7 @@ use maydaylib::user::User;
 use serde_json::Value;
 use std::sync::Mutex;
 
-pub async fn location(
+pub async fn register(
     // name: web::Path<String>,
     mut payload: Payload,
     data: Data<Mutex<AppState>>,

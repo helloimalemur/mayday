@@ -34,3 +34,5 @@ sqlx = { version = "0.8.2", features = [ "runtime-tokio", "tls-rustls", "mysql" 
 tokio = { version = "1.41.0", features = ["full"] }
 colored = "2.1.0"
 env_logger = "0.11.5"
+utoipa = "5"
+utoipa-swagger-ui = { version = "8.0.3", features = ["actix-web"] }

@@ -15,7 +15,7 @@ pub async fn root(data: Data<Mutex<AppState>>, req: HttpRequest) -> String {
         data.clone()
             .lock()
             .unwrap()
-            .api_key
+            .api_keys
             .lock()
             .unwrap()
             .to_vec(),
