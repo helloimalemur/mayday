@@ -438,7 +438,6 @@ pub async fn verify_session_route(
 #[cfg(test)]
 mod tests {
     use crate::api_keys::load_keys_from_file;
-    use crate::appstate::AppState;
     use crate::entities::session::{create_session, LoginRequest};
     use crate::{load_keys_from_file, AppState};
     use actix_web::web::Data;
