@@ -6,7 +6,7 @@ use std::sync::Mutex;
 pub struct AppState {
     pub mayday: Mayday,
     pub api_keys: Mutex<Vec<String>>,
-    pub db_pool: Mutex<DatabaseConnection>,
+    pub db_pool: DatabaseConnection,
     pub settings: Mutex<HashMap<String, String>>,
 }
 
@@ -19,7 +19,7 @@ impl AppState {
         AppState {
             mayday: Mayday::new(MaydayConfig::new()),
             api_keys: Mutex::new(keys),
-            db_pool: Mutex::new(db_pool),
+            db_pool,
             settings: Mutex::new(settings_map),
         }
     }

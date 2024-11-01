@@ -1,5 +1,5 @@
 use crate::appstate::AppState;
-use crate::{is_key_valid, MaydayRequest};
+use crate::{is_key_valid, user};
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::{Data, Payload};
 use actix_web::{web, HttpRequest};
@@ -7,13 +7,37 @@ use base64::Engine;
 use futures_util::StreamExt;
 use magic_crypt::generic_array::typenum::U256;
 use magic_crypt::MagicCryptTrait;
-use rand::Rng;
-use sea_orm::{sqlx, DatabaseConnection};
+use rand::{random, thread_rng, Rng, RngCore};
+use sea_orm::{sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, ConnectionTrait, DatabaseConnection, DeriveEntityModel, TransactionTrait};
 use sqlx::{MySql, Pool, Row};
 use std::io::Cursor;
-use std::sync::Mutex;
+use std::ops::Deref;
+use std::sync::{Mutex, MutexGuard};
 use serde::{Deserialize, Serialize};
 use utoipa::{OpenApi, ToSchema};
+use crate::mayday::MaydayRequest;
+use sea_orm::entity::prelude::*;
+
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
+pub enum Relation {}
+
+impl ActiveModelBehavior for ActiveModel {}
+
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema, PartialEq, DeriveEntityModel)]
+#[sea_orm(table_name = "user")]
+pub struct Model {
+    #[sea_orm(primary_key)]
+    #[sea_orm(column_name = "id")]
+    pub id: i16,
+    #[sea_orm(column_name = "user_id")]
+    pub user_id: i16,
+    #[sea_orm(column_name = "name")]
+    pub name: String,
+    #[sea_orm(column_name = "email")]
+    pub email: String,
+    #[sea_orm(column_name = "password")]
+    pub password: String,
+}
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub struct User {
@@ -22,6 +46,7 @@ pub struct User {
     pub email: String,
     pub password: String,
 }
+
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub enum UserRequestType {
@@ -40,24 +65,38 @@ pub struct UserRequest {
 }
 
 impl MaydayRequest for UserRequest {
-    fn process(&self, dbcon: DatabaseConnection) {
-        match &self.user_request_type {
-            UserRequestType::Create => {self.create(dbcon)}
-            UserRequestType::Read => {self.read(dbcon)}
-            UserRequestType::Update => {self.update(dbcon)}
-            UserRequestType::Delete => {self.delete(dbcon)}
-        }
+    async fn process(&self, dbcon: DatabaseConnection, message: UserRequest) {
+        todo!()
     }
-    fn create(&self, dbcon: DatabaseConnection) {
+
+    // async fn process(&self, dbcon: DatabaseConnection, message: UserRequest) {
+    //     match &self.user_request_type {
+    //         UserRequestType::Create => { self.create(dbcon, message) }
+    //         UserRequestType::Read => { self.read(dbcon, message) }
+    //         UserRequestType::Update => { self.update(dbcon, message) }
+    //         UserRequestType::Delete => { self.delete(dbcon, message) }
+    //     };
+    // }
+    async fn create(&self, dbcon: DatabaseConnection, message: UserRequest) {
+        let db = dbcon.clone();
+        let rand = random::<i16>();
+        let mut user = user::ActiveModel {
+            id: Default::default(),
+            user_id: ActiveValue::Set(rand),
+            name: ActiveValue::Set(message.name),
+            email: ActiveValue::Set(message.email),
+            password: ActiveValue::Set(message.password),
+        };
+        let inserted = user.insert(&db).await;
+        println!("{:?}", inserted);
+    }
+    async fn read(&self, dbcon: DatabaseConnection, message: UserRequest) {
         // todo!()
     }
-    fn read(&self, dbcon: DatabaseConnection) {
+    async fn update(&self, dbcon: DatabaseConnection, message: UserRequest) {
         // todo!()
     }
-    fn update(&self, dbcon: DatabaseConnection) {
-        // todo!()
-    }
-    fn delete(&self, dbcon: DatabaseConnection) {
+    async fn delete(&self, dbcon: DatabaseConnection, message: UserRequest) {
         // todo!()
     }
 }
@@ -151,7 +190,7 @@ pub async fn create_user_route(
 pub async fn check_user_exist(user_email: String, data: Data<Mutex<AppState>>) -> bool {
     let mut user_exists: bool = false;
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
 
     let query_result = sqlx::query("SELECT email FROM user WHERE email LIKE (?)")
         .bind(user_email.clone())
@@ -176,7 +215,7 @@ pub async fn check_user_exist_with_password_hash(
     data: Data<Mutex<AppState>>,
 ) -> bool {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
 
     // println!("{}", user_email);
     // println!("{}", user_password);
@@ -225,7 +264,7 @@ pub fn create_password_hash(password: String, hash_key: String) -> String {
 
 pub async fn create_user(user: User, data: Data<Mutex<AppState>>) {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
 
     println!("Create user: {}", user.email);
 
@@ -293,7 +332,7 @@ pub async fn delete_user_route(
 
 pub async fn delete_user(user: UserRequest, data: Data<Mutex<AppState>>) -> bool {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
 
     if let Ok(_query_result) = sqlx::query("DELETE FROM user WHERE email LIKE (?)")
         .bind(user.email)

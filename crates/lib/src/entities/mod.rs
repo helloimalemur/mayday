@@ -8,19 +8,3 @@ pub mod message;
 pub mod session;
 pub mod integrations;
 pub mod user;
-
-pub trait MaydayRequest {
-    fn process(&self, dbcon: DatabaseConnection);
-    fn create(&self, dbcon: DatabaseConnection) {
-        println!("Mayday request");
-    }
-    fn read(&self, dbcon: DatabaseConnection) {
-        println!("Mayday request");
-    }
-    fn update(&self, dbcon: DatabaseConnection) {
-        println!("Mayday request");
-    }
-    fn delete(&self, dbcon: DatabaseConnection) {
-        println!("Mayday request");
-    }
-}

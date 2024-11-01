@@ -12,7 +12,7 @@ impl MigrationTrait for Migration {
                     .table(User::Table)
                     .if_not_exists()
                     .col(pk_auto(User::Id))
-                    .col(string(User::UserId))
+                    .col(small_integer(User::UserId))
                     .col(string(User::Name))
                     .col(string(User::Email))
                     .col(string(User::Password))
@@ -20,7 +20,7 @@ impl MigrationTrait for Migration {
             )
             .await
     }
-
+// https://www.sea-ql.org/SeaORM/docs/0.4.x/generate-entity/entity-structure/
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .drop_table(Table::drop().table(User::Table).to_owned())

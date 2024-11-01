@@ -164,7 +164,7 @@ pub async fn create_session(
     data: Data<Mutex<AppState>>,
 ) -> String {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
 
     // println!("{:#?}", "try create session");
     // query user from db using login request
@@ -255,7 +255,7 @@ pub async fn logout_user_route(
                 // println!("{:#?}", logout_request.clone());
                 // let user_exists = check_user_exist(logout_rq.email.clone(), data.clone()).await;
                 // let mut app_state = data.lock();
-                // let mut db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+                // let mut db_pool = app_state.as_mut().unwrap().db_pool.clone();
                 let user_session_exists = check_if_session_exists(
                     SessionId::new(logout_rq.session_id.clone()),
                     data.clone(),
@@ -310,7 +310,7 @@ pub async fn delete_session_by_email(email: String, db_pool: DatabaseConnection)
 
 pub async fn delete_session_by_sessionid(session_id: String, data: Data<Mutex<AppState>>) {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
 
     let query_result = sqlx::query("DELETE FROM session WHERE sessionid=(?)")
         .bind(session_id.clone())
@@ -325,7 +325,7 @@ pub async fn delete_session_by_sessionid(session_id: String, data: Data<Mutex<Ap
 
 pub async fn check_if_session_exists(session_id: SessionId, data: Data<Mutex<AppState>>) -> bool {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
     println!("session check:");
     if session_id.session_id.len() > 0 {
         let result = sqlx::query("SELECT * FROM session WHERE sessionid=(?)")

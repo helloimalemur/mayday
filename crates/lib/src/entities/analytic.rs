@@ -89,7 +89,7 @@ pub async fn create_analytic(
     data: Data<Mutex<AppState>>,
 ) -> Result<(), anyhow::Error> {
     let mut app_state = data.lock();
-    let db_pool = app_state.as_mut().unwrap().db_pool.lock().unwrap();
+    let db_pool = app_state.as_mut().unwrap().db_pool.clone();
     if let Ok(_query_result) =
         sqlx::query("INSERT INTO analytic (date_created, ip_address, landing, user_agent, web_session) VALUES (?,?,?,?,?)")
             .bind(analytic.date_created)
