@@ -6,6 +6,7 @@ pub mod appstate;
 pub mod mayday;
 pub mod message;
 pub mod session;
+pub mod integrations;
 pub mod user;
 
 pub trait MaydayRequest {

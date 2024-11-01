@@ -16,6 +16,7 @@ pub async fn wait_for_db() -> DatabaseConnection {
 pub async fn db_connect() -> Result<DatabaseConnection, DbErr> {
     let mut connected = false;
     dotenv::from_filename("docker/.env").ok();
+    let sqlx_logging = env::var("SQLX_LOGGING").expect("missing SQLX_LOGGING").parse::<bool>().expect("invalid sqlx logging value");
     let pg_user = env::var("MARIADB_USER").expect("missing MARIADB_USER");
     let pg_pass = env::var("MARIADB_PASS").expect("missing MARIADB_PASS");
     let mut pg_host = env::var("MARIADB_HOST").expect("missing MARIADB_HOST");
@@ -42,22 +43,20 @@ pub async fn db_connect() -> Result<DatabaseConnection, DbErr> {
         let mut opt = ConnectOptions::new(conn_string.as_str());
         opt.max_connections(100)
             .min_connections(5)
-            .connect_timeout(Duration::from_secs(8))
-            .acquire_timeout(Duration::from_secs(8))
-            .idle_timeout(Duration::from_secs(8))
-            .max_lifetime(Duration::from_secs(8))
-            .sqlx_logging(true)
+            .connect_timeout(Duration::from_secs(4))
+            .acquire_timeout(Duration::from_secs(4))
+            .idle_timeout(Duration::from_secs(4))
+            .max_lifetime(Duration::from_secs(4))
+            .sqlx_logging(sqlx_logging)
             .sqlx_logging_level(log::LevelFilter::Info);
-        // .set_schema_search_path("my_schema"); // Setting default PostgreSQL schema
         if let Ok(connection) = Database::connect(opt).await {
             dbcon = connection;
             connected = true;
         } else {
             // if first connection attempt fails check to see if we're running within a container
-            if in_container::in_container() {
-                let cloned = pg_host.clone();
-                pg_host = cloned.replace("127.0.0.1", "172.17.0.1");
-            }
+            // if in_container::in_container() { ;
+            //
+            // }
             pg_host = try_host(attempt, pg_host);
         }
         attempt += 1;
@@ -68,22 +67,31 @@ pub async fn db_connect() -> Result<DatabaseConnection, DbErr> {
 fn try_host(mut attempt: i32, pg_host: String) -> String {
     let mut out = pg_host.clone();
     if attempt > 1 {
-        let cloned = pg_host.clone();
-        out = cloned.replace("172.17.0.1", "172.18.0.1");
+        // Try Docker
+        // Docker: The default subnet is 172.17.0.0/16.
+        print!("\x1B[2J\x1B[1;1H");
+        println!("Trying Docker subnet: {}", out);
+        out = "172.17.0.1".to_string();
     }
     if attempt > 2 {
-        let cloned = pg_host.clone();
-        out = cloned.replace("172.18.0.1", "172.19.0.1");
+        // Try k3s
+        out = "10.42.0.1".to_string();
     }
     if attempt > 3 {
-        let cloned = pg_host.clone();
-        out = cloned.replace("172.19.0.1", "172.20.0.1");
+        // Try openshift
+        out = "10.128.0.1".to_string();
+        // OpenShift: The default Service CIDR is 172.30.0.0/16.
     }
     if attempt > 4 {
-        let cloned = pg_host.clone();
-        out = cloned.replace("172.20.0.1", "172.16.0.1");
+        // Try micro k8s
+        // MicroK8s: The default pod CIDR is 10.1.0.0/16 and the default service CIDR is 10.152.183.0/24.
+        out = "10.1.0.1".to_string();
     }
     if attempt > 5 {
+        // Cilium: The default CIDR range is 10.0.0.0/8.
+        out = "10.0.0.1".to_string();
+    }
+    if attempt > 6 {
         attempt = 0;
     }
 
