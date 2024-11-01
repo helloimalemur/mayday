@@ -45,18 +45,20 @@ pub fn log(header: Header, message: &str) {
         )
         .unwrap();
     } else {
-        let mut log_file = OpenOptions::new()
+        if let Ok(mut log_file) = OpenOptions::new()
             .create_new(true)
             .append(true)
-            .open(LOG_PATH)
-            .unwrap();
-        writeln!(
-            log_file,
-            "[{}] {} {}",
-            Local::now().format("%m-%d-%Y %H:%M:%S").to_string(),
-            header.clear(),
-            message
-        )
-        .unwrap();
+            .open(LOG_PATH) {
+            writeln!(
+                log_file,
+                "[{}] {} {}",
+                Local::now().format("%m-%d-%Y %H:%M:%S").to_string(),
+                header.clear(),
+                message
+            )
+                .unwrap();
+        } else {
+            println!("WARNING LOG FILE INACCESSIBLE")
+        }
     }
 }

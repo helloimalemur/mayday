@@ -78,7 +78,7 @@ User                 Mobile App            Backend Service            Database
 **Diagram**:
 ```
 +-------------------+
-| Start             |
+|      Start        |
 +-------------------+
          |
          v
@@ -93,19 +93,19 @@ User                 Mobile App            Backend Service            Database
          |
          v
 +-------------------+
-| Check Movement    |
+|   Check Movement  |
 +-------------------+
          |
          v
 +-------------------+
 | Report Location   |
-| to Backend        |
+|    to Backend     |
 +-------------------+
          |
          v
 +-------------------+
-| Backend Checks    |
-| for Alerts        |
+|  Backend Checks   |
+|   for Alerts      |
 +-------------------+
          |
          v

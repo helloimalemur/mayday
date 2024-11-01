@@ -1,5 +1,5 @@
 # mayday
-
+### ~ **work in progress** ~
 primary goal of the app is to save lives when people are outside alone, protection, and vigilance without being too overwhelming or limiting the scope of use.
 
 ### 1. **Tracking and Alerts Overview**

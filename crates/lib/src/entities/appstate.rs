@@ -1,11 +1,13 @@
+use crate::mayday::{Mayday, MaydayConfig};
 use sea_orm::DatabaseConnection;
 use std::collections::HashMap;
 use std::sync::Mutex;
 
 pub struct AppState {
-    pub api_key: Mutex<Vec<String>>,
-    pub(crate) db_pool: Mutex<DatabaseConnection>,
-    pub(crate) settings: Mutex<HashMap<String, String>>,
+    pub mayday: Mayday,
+    pub api_keys: Mutex<Vec<String>>,
+    pub db_pool: Mutex<DatabaseConnection>,
+    pub settings: Mutex<HashMap<String, String>>,
 }
 
 impl AppState {
@@ -15,7 +17,8 @@ impl AppState {
         settings_map: HashMap<String, String>,
     ) -> AppState {
         AppState {
-            api_key: Mutex::new(keys),
+            mayday: Mayday::new(MaydayConfig::new()),
+            api_keys: Mutex::new(keys),
             db_pool: Mutex::new(db_pool),
             settings: Mutex::new(settings_map),
         }

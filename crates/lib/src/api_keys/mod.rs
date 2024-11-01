@@ -1,13 +1,13 @@
+use crate::appstate::AppState;
+use crate::load_keys_from_file;
 use actix_web::web::{BytesMut, Data};
 use actix_web::{web, HttpRequest};
+use futures_util::StreamExt;
+use rand::Rng;
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::{BufRead, Write};
 use std::sync::Mutex;
-use futures_util::StreamExt;
-use rand::Rng;
-use crate::appstate::AppState;
-use crate::{load_keys_from_file};
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct ApiKeyRequest {
@@ -35,7 +35,7 @@ pub async fn create_api_key(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             let mut body = BytesMut::new();
             while let Some(chunk) = payload.next().await {
@@ -51,7 +51,7 @@ pub async fn create_api_key(
             data.lock()
                 .as_mut()
                 .unwrap()
-                .api_key
+                .api_keys
                 .lock()
                 .as_mut()
                 .unwrap()
@@ -85,7 +85,7 @@ pub async fn delete_api_key(
                 .to_str()
                 .unwrap()
                 .to_string(),
-            data.lock().unwrap().api_key.lock().unwrap().to_vec(),
+            data.lock().unwrap().api_keys.lock().unwrap().to_vec(),
         ) {
             const MAX_SIZE: usize = 262_144; // max payload size is 256k
             let mut body = BytesMut::new();
@@ -99,7 +99,7 @@ pub async fn delete_api_key(
             let key_request = serde_json::from_slice::<ApiKeyRequest>(&body).unwrap();
 
             remove_api_key_from_file(key_request.api_key);
-            reload_state(&data.lock().unwrap().api_key, load_keys_from_file());
+            reload_state(&data.lock().unwrap().api_keys, load_keys_from_file());
             "api key deleted".to_string()
         } else {
             "invalid api key\n".to_string()
