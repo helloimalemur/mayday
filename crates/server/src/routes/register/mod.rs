@@ -1,15 +1,36 @@
 use crate::logger;
 use crate::logger::Header;
 use actix_web::error::ErrorBadRequest;
-use actix_web::web::{Data, Payload};
+use actix_web::web::{method, Data, Payload};
 use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
-use maydaylib::is_key_valid;
-use maydaylib::user::User;
-use serde_json::Value;
+use maydaylib::{is_key_valid};
+use maydaylib::register::{Register, RegisterRequest, RegisterRequestType};
 use std::sync::Mutex;
+use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 
+// curl -XPOST -H'X-API-KEY: somekey' localhost:8202/register -d '{
+// "name":"test@gmail.com",
+// "email":"john",
+// "password":"pss",
+// "register_request_type":"Create"
+// }'
+// https://github.com/juhaku/utoipa/blob/master/examples/todo-actix/src/todo.rs
+// https://docs.rs/utoipa/latest/utoipa/attr.path.html#examples
+#[utoipa::path(
+    post,
+    path = "/register",
+    responses(
+        (status = 201, description = "Register created successfully", body = RegisterRequest,
+            headers(
+                ("X-API-KEY" = String, description = "api-key")
+            ),
+        ),
+        (status = 500, description = "Register could not be created")
+        // (status = 409, description = "Register with id already exists", body = ErrorResponse, example = json!(ErrorResponse::Conflict(String::from("id = 1"))))
+    )
+)]
 pub async fn register(
     // name: web::Path<String>,
     mut payload: Payload,
@@ -49,7 +70,31 @@ pub async fn register(
 
         // println!("{:?}", body);
         let mut response = "ok\n".to_string();
-        if let Ok(message) = serde_json::from_slice::<Value>(&body) {
+        if let Ok(message) = serde_json::from_slice::<RegisterRequest>(&body) {
+            println!("PARSED: {:?}", message);
+            match message.register_request_type {
+                RegisterRequestType::Create => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.create(db_conn, MaydayRequestType::Register(message.clone())).await
+                }
+                RegisterRequestType::Read => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.read(db_conn, MaydayRequestType::Register(message.clone())).await
+                }
+                RegisterRequestType::Update => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.update(db_conn, MaydayRequestType::Register(message.clone())).await
+                }
+                RegisterRequestType::Delete => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.delete(db_conn, MaydayRequestType::Register(message.clone())).await
+                }
+            };
+
             response
         } else {
             let message = format!(

@@ -1,15 +1,36 @@
 use crate::logger;
 use crate::logger::Header;
 use actix_web::error::ErrorBadRequest;
-use actix_web::web::{Data, Payload};
+use actix_web::web::{method, Data, Payload};
 use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
-use maydaylib::is_key_valid;
-use maydaylib::session::SessionId;
-use maydaylib::user::User;
+use maydaylib::{is_key_valid};
+use maydaylib::session::{Session, SessionRequest, SessionRequestType};
 use std::sync::Mutex;
+use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 
+// curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
+// "name":"test@gmail.com",
+// "email":"john",
+// "password":"pss",
+// "session_request_type":"Create"
+// }'
+// https://github.com/juhaku/utoipa/blob/master/examples/todo-actix/src/todo.rs
+// https://docs.rs/utoipa/latest/utoipa/attr.path.html#examples
+#[utoipa::path(
+    post,
+    path = "/session",
+    responses(
+        (status = 201, description = "Session created successfully", body = SessionRequest,
+            headers(
+                ("X-API-KEY" = String, description = "api-key")
+            ),
+        ),
+        (status = 500, description = "Session could not be created")
+        // (status = 409, description = "Session with id already exists", body = ErrorResponse, example = json!(ErrorResponse::Conflict(String::from("id = 1"))))
+    )
+)]
 pub async fn session(
     // name: web::Path<String>,
     mut payload: Payload,
@@ -49,7 +70,31 @@ pub async fn session(
 
         // println!("{:?}", body);
         let mut response = "ok\n".to_string();
-        if let Ok(message) = serde_json::from_slice::<SessionId>(&body) {
+        if let Ok(message) = serde_json::from_slice::<SessionRequest>(&body) {
+            println!("PARSED: {:?}", message);
+            match message.session_request_type {
+                SessionRequestType::Create => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.create(db_conn, MaydayRequestType::Session(message.clone())).await
+                }
+                SessionRequestType::Read => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.read(db_conn, MaydayRequestType::Session(message.clone())).await
+                }
+                SessionRequestType::Update => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.update(db_conn, MaydayRequestType::Session(message.clone())).await
+                }
+                SessionRequestType::Delete => {
+                    let app_state = data.lock().unwrap();
+                    let db_conn = app_state.db_pool.clone();
+                    message.delete(db_conn, MaydayRequestType::Session(message.clone())).await
+                }
+            };
+
             response
         } else {
             let message = format!(

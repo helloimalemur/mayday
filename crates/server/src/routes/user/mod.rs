@@ -8,7 +8,7 @@ use maydaylib::appstate::AppState;
 use maydaylib::{is_key_valid};
 use maydaylib::user::{User, UserRequest, UserRequestType};
 use std::sync::Mutex;
-use maydaylib::mayday::MaydayRequest;
+use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 
 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
 // "name":"test@gmail.com",
@@ -76,22 +76,22 @@ pub async fn user(
                 UserRequestType::Create => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.create(db_conn, message.clone()).await
+                    message.create(db_conn, MaydayRequestType::User(message.clone())).await
                 }
                 UserRequestType::Read => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.read(db_conn, message.clone()).await
+                    message.read(db_conn, MaydayRequestType::User(message.clone())).await
                 }
                 UserRequestType::Update => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.update(db_conn, message.clone()).await
+                    message.update(db_conn, MaydayRequestType::User(message.clone())).await
                 }
                 UserRequestType::Delete => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.delete(db_conn, message.clone()).await
+                    message.delete(db_conn, MaydayRequestType::User(message.clone())).await
                 }
             };
 

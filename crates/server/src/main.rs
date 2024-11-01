@@ -1,9 +1,5 @@
 use crate::database::wait_for_db;
-use crate::routes::alert::alert;
-use crate::routes::location::location;
-use crate::routes::register::register;
 use crate::routes::root::root;
-use crate::routes::session::session;
 use crate::routes::user::user;
 use actix_cors::Cors;
 use actix_web::web::Data;
@@ -11,7 +7,6 @@ use actix_web::{web, App, HttpMessage, HttpServer, Responder};
 use config::Config;
 use maydaylib::appstate::AppState;
 use maydaylib::load_keys_from_file;
-use maydaylib::user::{create_user_route, delete_user_route};
 use maydaylib::*;
 use pnet::datalink;
 use std::collections::HashMap;
@@ -82,16 +77,16 @@ async fn main() {
             .wrap(cors)
             .app_data(state.clone())
             // .wrap(api_key::ApiKey::new("".to_string()))
-            .service(web::resource("/register").post(register))
-            .service(web::resource("/register/").post(register))
+            // .service(web::resource("/register").post(register))
+            // .service(web::resource("/register/").post(register))
             .service(web::resource("/user").post(user))
             .service(web::resource("/user/").post(user))
-            .service(web::resource("/session").post(session))
-            .service(web::resource("/session/").post(session))
-            .service(web::resource("/location").post(location))
-            .service(web::resource("/location/").post(location))
-            .service(web::resource("/alert").post(alert))
-            .service(web::resource("/alert/").post(alert))
+            // .service(web::resource("/session").post(session))
+            // .service(web::resource("/session/").post(session))
+            // .service(web::resource("/location").post(location))
+            // .service(web::resource("/location/").post(location))
+            // .service(web::resource("/alert").post(alert))
+            // .service(web::resource("/alert/").post(alert))
             .service(web::resource("/").to(root))
             .service(
                 SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", openapi.clone()),

@@ -1,20 +1,28 @@
 use sea_orm::{ActiveModelTrait, DatabaseConnection, DeriveRelation, EnumIter};
 use std::collections::HashMap;
 use std::sync::MutexGuard;
+use crate::register::RegisterRequest;
+use crate::session::SessionRequest;
 use crate::user::{User, UserRequest};
 
+pub enum MaydayRequestType {
+    User(UserRequest),
+    Session(SessionRequest),
+    Register(RegisterRequest)
+}
+
 pub trait MaydayRequest {
-    async fn process(&self, dbcon: DatabaseConnection, message: UserRequest);
-    async fn create(&self, dbcon: DatabaseConnection, message: UserRequest) {
+    async fn process(&self, dbcon: DatabaseConnection, message: MaydayRequestType);
+    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         println!("Mayday request");
     }
-    async fn read(&self, dbcon: DatabaseConnection, message: UserRequest) {
+    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         println!("Mayday request");
     }
-    async fn update(&self, dbcon: DatabaseConnection, message: UserRequest) {
+    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         println!("Mayday request");
     }
-    async fn delete(&self, dbcon: DatabaseConnection, message: UserRequest) {
+    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         println!("Mayday request");
     }
 }

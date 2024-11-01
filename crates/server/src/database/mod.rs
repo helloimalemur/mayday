@@ -69,27 +69,30 @@ fn try_host(mut attempt: i32, pg_host: String) -> String {
     if attempt > 1 {
         // Try Docker
         // Docker: The default subnet is 172.17.0.0/16.
-        print!("\x1B[2J\x1B[1;1H");
-        println!("Trying Docker subnet: {}", out);
         out = "172.17.0.1".to_string();
+        println!("Trying Docker subnet: {}", out);
     }
     if attempt > 2 {
         // Try k3s
         out = "10.42.0.1".to_string();
+        println!("Trying K3s subnet: {}", out);
     }
     if attempt > 3 {
         // Try openshift
         out = "10.128.0.1".to_string();
+        println!("Trying Openshift subnet: {}", out);
         // OpenShift: The default Service CIDR is 172.30.0.0/16.
     }
     if attempt > 4 {
         // Try micro k8s
         // MicroK8s: The default pod CIDR is 10.1.0.0/16 and the default service CIDR is 10.152.183.0/24.
         out = "10.1.0.1".to_string();
+        println!("Trying micro k8s subnet: {}", out);
     }
     if attempt > 5 {
         // Cilium: The default CIDR range is 10.0.0.0/8.
         out = "10.0.0.1".to_string();
+        println!("Trying Cilium subnet: {}", out);
     }
     if attempt > 6 {
         attempt = 0;

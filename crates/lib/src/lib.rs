@@ -1,6 +1,8 @@
 mod api_keys;
 pub use api_keys::*;
 mod entities;
+mod util;
+
 pub use entities::*;
 use std::fs;
 use std::io::BufRead;
