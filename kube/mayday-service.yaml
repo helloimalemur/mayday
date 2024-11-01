@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: mayday
+  labels:
+    app: mayday
+  name: mayday
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "8202"
+      port: 8202
+      targetPort: 8202
+  selector:
+    app: mayday

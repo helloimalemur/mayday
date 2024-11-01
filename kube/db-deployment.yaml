@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mayday
+  labels:
+    app: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      namespace: mayday
+      labels:
+        app: db
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: DATABASE_URL
+                  name: env
+            - name: MARIADB_APP_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_APP_PASS
+                  name: env
+            - name: MARIADB_DATABASE
+            - name: MARIADB_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_DB
+                  name: env
+            - name: MARIADB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_HOST
+                  name: env
+            - name: MARIADB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_PASS
+                  name: env
+            - name: MARIADB_PASSWORD
+            - name: MARIADB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_PORT
+                  name: env
+            - name: MARIADB_ROOT_PASSWORD
+            - name: MARIADB_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_USER
+                  name: env
+          image: mayday-db:latest
+          imagePullPolicy: Never
+          name: db
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+      restartPolicy: Always
