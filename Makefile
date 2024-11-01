@@ -12,13 +12,13 @@ build:
 ############################################
 ## up db and run rust code
 .PHONY: dev
-dev: startdb
+dev: startdb dbup
 	@cargo run
 ############################################
 ## start containers
 .PHONY: up
-up: build
-	@docker-compose -f docker/docker-compose.yaml up
+up: build startdb dbup
+	@docker-compose -f docker/docker-compose.yaml up mayday
 
 ## start containers daemonized
 .PHONY: start
