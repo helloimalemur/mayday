@@ -26,6 +26,9 @@ primary goal of the app is to save lives when people are outside alone, protecti
 
 ## docker/.env
 ```dotenv
+MAYDAY_HOST=127.0.0.1
+MAYDAY_PUBLIC_URL=http://localhost
+MAYDAY_PORT=8202
 MARIADB_HOST=127.0.0.1
 MARIADB_PORT=3306
 MARIADB_USER=maydayapp
@@ -33,7 +36,12 @@ MARIADB_PASS=password
 MARIADB_APP_PASS=password
 MARIADB_DB=mayday
 DATABASE_URL="mysql://$(MARIADB_USER):$(MARIADB_PASS)@$(MARIADB_HOST):$(MARIADB_PORT)/$(MARIADB_DB)"
+SQLX_LOGGING=false
 ```
 ## install sea-orm cli
     cargo install sea-orm-cli@1.0.0-rc.5
 
+
+#### References
+    https://github.com/juhaku/utoipa/blob/master/examples/todo-actix/src/todo.rs
+    https://docs.rs/utoipa/latest/utoipa/attr.path.html#examples

@@ -10,14 +10,6 @@ use maydaylib::user::{User, UserRequest, UserRequestType};
 use std::sync::Mutex;
 use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 
-// curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
-// "name":"test@gmail.com",
-// "email":"john",
-// "password":"pss",
-// "user_request_type":"Create"
-// }'
-// https://github.com/juhaku/utoipa/blob/master/examples/todo-actix/src/todo.rs
-// https://docs.rs/utoipa/latest/utoipa/attr.path.html#examples
 #[utoipa::path(
     post,
     path = "/user",
@@ -73,21 +65,45 @@ pub async fn user(
         if let Ok(message) = serde_json::from_slice::<UserRequest>(&body) {
             println!("PARSED: {:?}", message);
             match message.user_request_type {
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "user_request_type":"Create"
+                // }'
                 UserRequestType::Create => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
                     message.create(db_conn, MaydayRequestType::User(message.clone())).await
                 }
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "user_request_type":"Read"
+                // }'
                 UserRequestType::Read => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
                     message.read(db_conn, MaydayRequestType::User(message.clone())).await
                 }
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "user_request_type":"Update"
+                // }'
                 UserRequestType::Update => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
                     message.update(db_conn, MaydayRequestType::User(message.clone())).await
                 }
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "user_request_type":"Delete"
+                // }'
                 UserRequestType::Delete => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();

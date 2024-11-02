@@ -8,33 +8,33 @@ default-run = "mayday_server"
 [dependencies]
 # https://docs.rs/utoipa/latest/utoipa/attr.path.html#actix_extras-feature-support-for-actix-web
 # https://github.com/juhaku/utoipa/tree/master/examples
-actix = "0.13.5"
+#actix = "0.13.5"
 actix-cors = { version = "0.7.0"}
-actix-files = "0.6.5"
-actix-rt = "2.9.0"
+#actix-files = "0.6.5"
+#actix-rt = "2.9.0"
 actix-web = "4.9.0"
-anyhow = "1.0.86"
-base64 = "0.22.1"
+#anyhow = "1.0.86"
+#base64 = "0.22.1"
 chrono = "0.4.38"
 colored = "2.1.0"
 config = "0.14.0"
-discord-webhook-lib = "0.1.7"
+#discord-webhook-lib = "0.1.7"
 dotenv = "0.15.0"
 env_logger = "0.11.5"
 futures-util = "0.3.30"
-in-container = "1.1.0"
-lettre = "0.11.7"
+#in-container = "1.1.0"
+#lettre = "0.11.7"
 log = "0.4.22"
-magic-crypt = "3.1.13"
+#magic-crypt = "3.1.13"
 maydaylib = { path = "../lib" }
 pnet = "0.35.0"
-rand = "0.9.0-alpha.1"
-reqwest = "0.12.8"
+#rand = "0.9.0-alpha.1"
+#reqwest = "0.12.8"
 sea-orm = { version = "1.1.0", features = ["sqlx-mysql", "runtime-tokio-rustls", "macros", "json-array", "with-chrono", "with-time", "with-json", "with-uuid" ] }
-serde = { version = "1.0.213", features = ["derive"] }
-serde_derive = "1.0.210"
+#serde = { version = "1.0.213", features = ["derive"] }
+#serde_derive = "1.0.210"
 serde_json = "1.0.132"
-sqlx = { version = "0.8.2", features = [ "runtime-tokio", "tls-rustls", "mysql" ] }
+#sqlx = { version = "0.8.2", features = [ "runtime-tokio", "tls-rustls", "mysql" ] }
 tokio = { version = "1.41.0", features = ["full"] }
 utoipa = "5"
 utoipa-swagger-ui = { version = "8.0.3", features = ["actix-web"] }

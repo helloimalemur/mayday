@@ -6,10 +6,9 @@ use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
 use maydaylib::{is_key_valid};
-use maydaylib::session::{Session, SessionRequest, SessionRequestType};
 use std::sync::Mutex;
 use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
-
+use maydaylib::session::{SessionRequest, SessionRequestType};
 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
 // "name":"test@gmail.com",
 // "email":"john",
@@ -18,6 +17,7 @@ use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 // }'
 // https://github.com/juhaku/utoipa/blob/master/examples/todo-actix/src/todo.rs
 // https://docs.rs/utoipa/latest/utoipa/attr.path.html#examples
+
 #[utoipa::path(
     post,
     path = "/session",

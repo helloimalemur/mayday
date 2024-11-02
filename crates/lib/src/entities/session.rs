@@ -6,23 +6,13 @@
 // // PRIMARY KEY (`sessionid`)
 // // ) ENGINE=InnoDB;
 
-use crate::appstate::AppState;
-use crate::entities::user::{User};
-use crate::{is_key_valid, session, user};
-use actix_web::error::ErrorBadRequest;
-use actix_web::web::Data;
-use actix_web::{web, HttpRequest};
-use futures_util::StreamExt;
-use rand::Rng;
-use sqlx::mysql::MySqlRow;
-use sqlx::{MySql, Pool, Row};
-use std::sync::Mutex;
+use crate::{session};
+use sqlx::{Row};
 use rand::{random};
 use sea_orm::{sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel};
 use utoipa::{OpenApi, ToSchema};
 use crate::mayday::{MaydayRequest, MaydayRequestType};
 use sea_orm::entity::prelude::*;
-use crate::user::{UserRequest, UserRequestType};
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
@@ -34,13 +24,13 @@ impl ActiveModelBehavior for ActiveModel {}
 pub struct Model {
     #[sea_orm(primary_key)]
     #[sea_orm(column_name = "id")]
-    user_id: u16,
+    pub user_id: u16,
     #[sea_orm(column_name = "name")]
-    name: String,
+    pub name: String,
     #[sea_orm(column_name = "email")]
-    email: String,
+    pub email: String,
     #[sea_orm(column_name = "session_id")]
-    session_id: String,
+    pub session_id: String,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
@@ -61,35 +51,35 @@ pub struct SessionRequest {
 }
 
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
-pub struct Session {
-    user_id: u16,
-    name: String,
-    email: String,
-    session_id: String,
-}
+// #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
+// pub struct Session {
+//     pub user_id: u16,
+//     pub name: String,
+//     pub email: String,
+//     pub session_id: String,
+// }
+//
+// #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
+// pub struct SessionId {
+//     pub session_id: String,
+// }
+//
+// impl SessionId {
+//     pub fn new(string: String) -> SessionId {
+//         SessionId { session_id: string }
+//     }
+// }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
-pub struct SessionId {
-    session_id: String,
-}
-
-impl SessionId {
-    pub fn new(string: String) -> SessionId {
-        SessionId { session_id: string }
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
-pub struct LoginRequest {
-    email: String,
-    password: String,
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
-pub struct LogoutRequest {
-    session_id: String,
-}
+// #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
+// pub struct LoginRequest {
+//     pub email: String,
+//     pub password: String,
+// }
+//
+// #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
+// pub struct LogoutRequest {
+//     pub session_id: String,
+// }
 
 // CREATE TABLE `session` (
 // `userid` INT NOT NULL,
