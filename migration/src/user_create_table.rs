@@ -12,10 +12,10 @@ impl MigrationTrait for Migration {
                     .table(User::Table)
                     .if_not_exists()
                     .col(pk_auto(User::Id))
-                    .col(small_integer(User::UserId))
+                    .col(integer(User::UserId))
                     .col(string(User::Name))
                     .col(string(User::Email))
-                    .col(string(User::Password))
+                    .col(string(User::Secret))
                     .to_owned(),
             )
             .await
@@ -35,5 +35,5 @@ enum User {
     UserId,
     Name,
     Email,
-    Password,
+    Secret,
 }

@@ -116,7 +116,7 @@ impl MaydayRequest for RegisterRequest {
     // }'
     async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         let db = dbcon.clone();
-        let rand = random::<i16>();
+        let rand = random::<u16>();
         if let MaydayRequestType::Register(register) = message {
             let mut register = register::ActiveModel {
                 user_id: ActiveValue::Set(register.user_id),
@@ -130,7 +130,7 @@ impl MaydayRequest for RegisterRequest {
     }
     async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         // let db = dbcon.clone();
-        // let rand = random::<i16>();
+        // let rand = random::<u16>();
         // let mut register = register::ActiveModel {
         //     id: Default::default(),
         //     register_id: ActiveValue::Set(rand),
@@ -143,7 +143,7 @@ impl MaydayRequest for RegisterRequest {
     }
     async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         // let db = dbcon.clone();
-        // let rand = random::<i16>();
+        // let rand = random::<u16>();
         // let mut register = register::ActiveModel {
         //     id: Default::default(),
         //     register_id: ActiveValue::Set(rand),
@@ -156,7 +156,7 @@ impl MaydayRequest for RegisterRequest {
     }
     async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         // let db = dbcon.clone();
-        // let rand = random::<i16>();
+        // let rand = random::<u16>();
         // let mut register = register::ActiveModel {
         //     id: Default::default(),
         //     register_id: ActiveValue::Set(rand),

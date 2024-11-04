@@ -15,6 +15,7 @@ impl MigrationTrait for Migration {
                     .col(string(Session::Name))
                     .col(string(Session::Email))
                     .col(string(Session::SessionId))
+                    .col(integer(Session::Timestamp))
                     .to_owned(),
             )
             .await
@@ -34,4 +35,5 @@ enum Session {
     Name,
     Email,
     SessionId,
+    Timestamp
 }

@@ -16,7 +16,7 @@ pub fn create_password_hash(password: String, hash_key: String) -> String {
     encrypted
 }
 
-async fn generate_jwt_session_id(_user_id: i16) -> String {
+async fn generate_jwt_session_id(_user_id: u16) -> String {
     let mut rand = rand::thread_rng();
     let temp_new_session_id: u128 = rand.gen();
     temp_new_session_id.to_string()

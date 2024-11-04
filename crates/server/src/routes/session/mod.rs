@@ -6,17 +6,9 @@ use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
 use maydaylib::{is_key_valid};
+use maydaylib::session::{Session, SessionRequest, SessionRequestType};
 use std::sync::Mutex;
 use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
-use maydaylib::session::{SessionRequest, SessionRequestType};
-// curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
-// "name":"test@gmail.com",
-// "email":"john",
-// "password":"pss",
-// "session_request_type":"Create"
-// }'
-// https://github.com/juhaku/utoipa/blob/master/examples/todo-actix/src/todo.rs
-// https://docs.rs/utoipa/latest/utoipa/attr.path.html#examples
 
 #[utoipa::path(
     post,
@@ -73,21 +65,46 @@ pub async fn session(
         if let Ok(message) = serde_json::from_slice::<SessionRequest>(&body) {
             println!("PARSED: {:?}", message);
             match message.session_request_type {
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
+                // "user_id":1,
+                // "name":"john",
+                // "email":"pss",
+                // "session_id":"pss",
+                // "session_request_type":"Create"
+                // }'
                 SessionRequestType::Create => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
                     message.create(db_conn, MaydayRequestType::Session(message.clone())).await
                 }
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "session_request_type":"Read"
+                // }'
                 SessionRequestType::Read => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
                     message.read(db_conn, MaydayRequestType::Session(message.clone())).await
                 }
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "session_request_type":"Update"
+                // }'
                 SessionRequestType::Update => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
                     message.update(db_conn, MaydayRequestType::Session(message.clone())).await
                 }
+                // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
+                // "name":"test@gmail.com",
+                // "email":"john",
+                // "password":"pss",
+                // "session_request_type":"Delete"
+                // }'
                 SessionRequestType::Delete => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();

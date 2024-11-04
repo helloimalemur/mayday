@@ -13,6 +13,8 @@ use sea_orm::{sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, Database
 use utoipa::{OpenApi, ToSchema};
 use crate::mayday::{MaydayRequest, MaydayRequestType};
 use sea_orm::entity::prelude::*;
+use sqlx::types::chrono;
+use sqlx::types::uuid::Timestamp;
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
@@ -24,11 +26,13 @@ impl ActiveModelBehavior for ActiveModel {}
 pub struct Model {
     #[sea_orm(primary_key)]
     #[sea_orm(column_name = "id")]
-    pub user_id: u16,
+    pub user_id: i16,
     #[sea_orm(column_name = "name")]
     pub name: String,
     #[sea_orm(column_name = "email")]
     pub email: String,
+    #[sea_orm(column_name = "timestamp")]
+    pub timestamp: i64,
     #[sea_orm(column_name = "session_id")]
     pub session_id: String,
 }
@@ -43,21 +47,23 @@ pub enum SessionRequestType {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub struct SessionRequest {
-    pub user_id: u16,
+    pub user_id: i16,
     pub name: String,
     pub email: String,
     pub session_id: String,
+    pub timestamp: i64,
     pub session_request_type: SessionRequestType,
 }
 
 
-// #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
-// pub struct Session {
-//     pub user_id: u16,
-//     pub name: String,
-//     pub email: String,
-//     pub session_id: String,
-// }
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
+pub struct Session {
+    pub user_id: u16,
+    pub name: String,
+    pub email: String,
+    pub timestamp: i64,
+    pub session_id: String,
+}
 //
 // #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 // pub struct SessionId {
@@ -106,12 +112,13 @@ impl MaydayRequest for SessionRequest {
     // }'
     async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         let db = dbcon.clone();
-        let rand = random::<i16>();
+        let rand = random::<u16>();
         if let MaydayRequestType::Session(session) = message {
             let mut session = session::ActiveModel {
                 user_id: ActiveValue::Set(session.user_id),
                 name: ActiveValue::Set(session.name),
                 email: ActiveValue::Set(session.email),
+                timestamp: ActiveValue::Set(chrono::Local::now().timestamp()),
                 session_id: ActiveValue::Set(session.session_id),
             };
             let inserted = session.insert(&db).await;
@@ -120,7 +127,7 @@ impl MaydayRequest for SessionRequest {
     }
     async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         // let db = dbcon.clone();
-        // let rand = random::<i16>();
+        // let rand = random::<u16>();
         // let mut session = session::ActiveModel {
         //     id: Default::default(),
         //     session_id: ActiveValue::Set(rand),
@@ -133,7 +140,7 @@ impl MaydayRequest for SessionRequest {
     }
     async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         // let db = dbcon.clone();
-        // let rand = random::<i16>();
+        // let rand = random::<u16>();
         // let mut session = session::ActiveModel {
         //     id: Default::default(),
         //     session_id: ActiveValue::Set(rand),
@@ -146,7 +153,7 @@ impl MaydayRequest for SessionRequest {
     }
     async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         // let db = dbcon.clone();
-        // let rand = random::<i16>();
+        // let rand = random::<u16>();
         // let mut session = session::ActiveModel {
         //     id: Default::default(),
         //     session_id: ActiveValue::Set(rand),
