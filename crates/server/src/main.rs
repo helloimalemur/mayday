@@ -1,7 +1,7 @@
 use crate::database::wait_for_db;
 use crate::routes::root::root;
-use crate::routes::user::user;
 use crate::routes::session::session;
+use crate::routes::user::user;
 use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{web, App, HttpMessage, HttpServer, Responder};
@@ -58,10 +58,7 @@ async fn main() {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     #[derive(OpenApi)]
-    #[openapi(paths(
-        routes::user::user,
-        routes::session::session
-    ))]
+    #[openapi(paths(routes::user::user, routes::session::session))]
     struct ApiDoc;
     let openapi = ApiDoc::openapi();
     // println!("{}", ApiDoc::openapi().to_pretty_json().unwrap());

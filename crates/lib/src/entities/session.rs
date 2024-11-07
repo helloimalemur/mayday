@@ -6,22 +6,26 @@
 // // PRIMARY KEY (`sessionid`)
 // // ) ENGINE=InnoDB;
 
-use crate::{session};
-use sqlx::{Row};
-use rand::{random};
-use sea_orm::{sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel};
-use utoipa::{OpenApi, ToSchema};
 use crate::mayday::{MaydayRequest, MaydayRequestType};
+use crate::session;
+use rand::random;
 use sea_orm::entity::prelude::*;
+use sea_orm::{
+    sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel,
+};
 use sqlx::types::chrono;
 use sqlx::types::uuid::Timestamp;
+use sqlx::Row;
+use utoipa::{OpenApi, ToSchema};
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema, PartialEq, DeriveEntityModel)]
+#[derive(
+    Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema, PartialEq, DeriveEntityModel,
+)]
 #[sea_orm(table_name = "session")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -42,7 +46,7 @@ pub enum SessionRequestType {
     Create,
     Read,
     Update,
-    Delete
+    Delete,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
@@ -54,7 +58,6 @@ pub struct SessionRequest {
     pub timestamp: i64,
     pub session_request_type: SessionRequestType,
 }
-
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub struct Session {
@@ -98,10 +101,10 @@ pub struct Session {
 impl MaydayRequest for SessionRequest {
     async fn process(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         match &self.session_request_type {
-            SessionRequestType::Create => { self.create(dbcon, message).await }
-            SessionRequestType::Read => { self.read(dbcon, message).await }
-            SessionRequestType::Update => { self.update(dbcon, message).await }
-            SessionRequestType::Delete => { self.delete(dbcon, message).await }
+            SessionRequestType::Create => self.create(dbcon, message).await,
+            SessionRequestType::Read => self.read(dbcon, message).await,
+            SessionRequestType::Update => self.update(dbcon, message).await,
+            SessionRequestType::Delete => self.delete(dbcon, message).await,
         };
     }
     // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/session -d '{
@@ -165,4 +168,3 @@ impl MaydayRequest for SessionRequest {
         // println!("{:?}", inserted);
     }
 }
-

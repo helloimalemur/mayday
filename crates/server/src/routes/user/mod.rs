@@ -5,10 +5,10 @@ use actix_web::web::{method, Data, Payload};
 use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
-use maydaylib::{is_key_valid};
+use maydaylib::is_key_valid;
+use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 use maydaylib::user::{User, UserRequest, UserRequestType};
 use std::sync::Mutex;
-use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
 
 #[utoipa::path(
     post,
@@ -74,7 +74,9 @@ pub async fn user(
                 UserRequestType::Create => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.create(db_conn, MaydayRequestType::User(message.clone())).await
+                    message
+                        .create(db_conn, MaydayRequestType::User(message.clone()))
+                        .await
                 }
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
@@ -85,7 +87,9 @@ pub async fn user(
                 UserRequestType::Read => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.read(db_conn, MaydayRequestType::User(message.clone())).await
+                    message
+                        .read(db_conn, MaydayRequestType::User(message.clone()))
+                        .await
                 }
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
@@ -96,7 +100,9 @@ pub async fn user(
                 UserRequestType::Update => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.update(db_conn, MaydayRequestType::User(message.clone())).await
+                    message
+                        .update(db_conn, MaydayRequestType::User(message.clone()))
+                        .await
                 }
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
@@ -107,7 +113,9 @@ pub async fn user(
                 UserRequestType::Delete => {
                     let app_state = data.lock().unwrap();
                     let db_conn = app_state.db_pool.clone();
-                    message.delete(db_conn, MaydayRequestType::User(message.clone())).await
+                    message
+                        .delete(db_conn, MaydayRequestType::User(message.clone()))
+                        .await
                 }
             };
 

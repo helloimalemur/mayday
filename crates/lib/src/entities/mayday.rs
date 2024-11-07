@@ -1,14 +1,14 @@
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DeriveRelation, EnumIter};
-use std::collections::HashMap;
-use std::sync::MutexGuard;
 use crate::register::RegisterRequest;
 use crate::session::SessionRequest;
 use crate::user::{User, UserRequest};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, DeriveRelation, EnumIter};
+use std::collections::HashMap;
+use std::sync::MutexGuard;
 
 pub enum MaydayRequestType {
     User(UserRequest),
     Session(SessionRequest),
-    Register(RegisterRequest)
+    Register(RegisterRequest),
 }
 
 pub trait MaydayRequest {

@@ -15,13 +15,13 @@ primary goal of the app is to save lives when people are outside alone, protecti
     npm/node
 
 ## Development workflow
-    # start db in docker and run rust code 
+    # start db in docker and run rust code local
     make dev
-    # build and start both db and mayday in docker containers
+
+    # build and start both db and mayday with docker-compose up -d
     make init
-    # build images only
-    make build
-    # build and up the new images
+
+    # build and start both db and mayday with docker-compose up
     make up 
 
 ## docker/.env

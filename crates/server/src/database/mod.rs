@@ -16,7 +16,10 @@ pub async fn wait_for_db() -> DatabaseConnection {
 pub async fn db_connect() -> Result<DatabaseConnection, DbErr> {
     let mut connected = false;
     dotenv::from_filename("docker/.env").ok();
-    let sqlx_logging = env::var("SQLX_LOGGING").expect("missing SQLX_LOGGING").parse::<bool>().expect("invalid sqlx logging value");
+    let sqlx_logging = env::var("SQLX_LOGGING")
+        .expect("missing SQLX_LOGGING")
+        .parse::<bool>()
+        .expect("invalid sqlx logging value");
     let pg_user = env::var("MARIADB_USER").expect("missing MARIADB_USER");
     let pg_pass = env::var("MARIADB_PASS").expect("missing MARIADB_PASS");
     let mut pg_host = env::var("MARIADB_HOST").expect("missing MARIADB_HOST");

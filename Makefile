@@ -1,5 +1,4 @@
 include docker/.env
-
 ## start everything from scratch
 .PHONY: init
 init: build startdb dbup startmayday
@@ -18,7 +17,17 @@ dev: startdb dbup
 ## start containers
 .PHONY: up
 up: build startdb dbup
+	@docker-compose -f docker/docker-compose.yaml up
+
+## start containers
+.PHONY: backend
+backend: build startdb dbup
 	@docker-compose -f docker/docker-compose.yaml up mayday
+
+## start containers
+.PHONY: frontend
+frontend: build startdb dbup backend
+	@docker-compose -f docker/docker-compose.yaml up mayday-fe
 
 ## start containers daemonized
 .PHONY: start
@@ -70,12 +79,23 @@ prune: down
 	@yes|docker system prune -a
 	@cargo clean
 	@cd migration/ && cargo clean
-
+	@rm -rf frontend/.next/
+	@rm -rf frontend/node_modules/
 ############################################
 ## build rust
 .PHONY: rust
 rust:
 	@cargo build
+
+############################################
+## frontend
+.PHONY: fedev
+fedev :
+	@cd frontend/ && npm install --force && npm run dev
+
+.PHONY: frontend-dev
+frontend-dev: fedev
+	@:
 
 ############################################
 ## database migrations - seaorm
@@ -99,3 +119,12 @@ dbstatus:
 .PHONY: dbconn
 dbconn:
 	@mariadb -u ${MARIADB_USER} -h ${MARIADB_HOST} -p${MARIADB_PASS}
+
+## Dependencies
+.PHONY: install-node
+install-node:
+	@./scripts/install-node.sh
+
+.PHONY: install-deps
+install-deps: install-node
+	@:

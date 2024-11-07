@@ -7,29 +7,33 @@
 // // ) ENGINE=InnoDB;
 
 use crate::appstate::AppState;
-use crate::entities::user::{User};
+use crate::entities::user::User;
+use crate::mayday::{MaydayRequest, MaydayRequestType};
+use crate::user::{UserRequest, UserRequestType};
 use crate::{is_key_valid, register, user};
 use actix_web::error::ErrorBadRequest;
 use actix_web::web::Data;
 use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
+use rand::random;
 use rand::Rng;
+use sea_orm::entity::prelude::*;
+use sea_orm::{
+    sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel,
+};
 use sqlx::mysql::MySqlRow;
 use sqlx::{MySql, Pool, Row};
 use std::sync::Mutex;
-use rand::{random};
-use sea_orm::{sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel};
 use utoipa::{OpenApi, ToSchema};
-use crate::mayday::{MaydayRequest, MaydayRequestType};
-use sea_orm::entity::prelude::*;
-use crate::user::{UserRequest, UserRequestType};
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema, PartialEq, DeriveEntityModel)]
+#[derive(
+    Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema, PartialEq, DeriveEntityModel,
+)]
 #[sea_orm(table_name = "register")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -48,7 +52,7 @@ pub enum RegisterRequestType {
     Create,
     Read,
     Update,
-    Delete
+    Delete,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
@@ -59,7 +63,6 @@ pub struct RegisterRequest {
     pub register_id: String,
     pub register_request_type: RegisterRequestType,
 }
-
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, ToSchema)]
 pub struct Register {
@@ -76,7 +79,9 @@ pub struct RegisterId {
 
 impl RegisterId {
     pub fn new(string: String) -> RegisterId {
-        RegisterId { register_id: string }
+        RegisterId {
+            register_id: string,
+        }
     }
 }
 
@@ -102,10 +107,10 @@ pub struct LogoutRequest {
 impl MaydayRequest for RegisterRequest {
     async fn process(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
         match &self.register_request_type {
-            RegisterRequestType::Create => { self.create(dbcon, message).await }
-            RegisterRequestType::Read => { self.read(dbcon, message).await }
-            RegisterRequestType::Update => { self.update(dbcon, message).await }
-            RegisterRequestType::Delete => { self.delete(dbcon, message).await }
+            RegisterRequestType::Create => self.create(dbcon, message).await,
+            RegisterRequestType::Read => self.read(dbcon, message).await,
+            RegisterRequestType::Update => self.update(dbcon, message).await,
+            RegisterRequestType::Delete => self.delete(dbcon, message).await,
         };
     }
     // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/register -d '{
@@ -168,4 +173,3 @@ impl MaydayRequest for RegisterRequest {
         // println!("{:?}", inserted);
     }
 }
-

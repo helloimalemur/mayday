@@ -1,8 +1,8 @@
-use std::io::Cursor;
 use base64::Engine;
 use magic_crypt::generic_array::typenum::U256;
 use magic_crypt::MagicCryptTrait;
 use rand::Rng;
+use std::io::Cursor;
 
 pub fn create_password_hash(password: String, hash_key: String) -> String {
     let mc = magic_crypt::new_magic_crypt!(hash_key, 256);

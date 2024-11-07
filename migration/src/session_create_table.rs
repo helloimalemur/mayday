@@ -35,5 +35,5 @@ enum Session {
     Name,
     Email,
     SessionId,
-    Timestamp
+    Timestamp,
 }

@@ -20,7 +20,7 @@ impl MigrationTrait for Migration {
             )
             .await
     }
-// https://www.sea-ql.org/SeaORM/docs/0.4.x/generate-entity/entity-structure/
+    // https://www.sea-ql.org/SeaORM/docs/0.4.x/generate-entity/entity-structure/
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .drop_table(Table::drop().table(User::Table).to_owned())

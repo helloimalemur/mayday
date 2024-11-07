@@ -48,7 +48,8 @@ pub fn log(header: Header, message: &str) {
         if let Ok(mut log_file) = OpenOptions::new()
             .create_new(true)
             .append(true)
-            .open(LOG_PATH) {
+            .open(LOG_PATH)
+        {
             writeln!(
                 log_file,
                 "[{}] {} {}",
@@ -56,7 +57,7 @@ pub fn log(header: Header, message: &str) {
                 header.clear(),
                 message
             )
-                .unwrap();
+            .unwrap();
         } else {
             println!("WARNING LOG FILE INACCESSIBLE")
         }
