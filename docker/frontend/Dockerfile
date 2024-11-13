@@ -1,5 +1,5 @@
 FROM node:22.4.0-bullseye
-WORKDIR /mayday-fe
+WORKDIR /mayday-frontend
 COPY frontend/ .
 RUN ls
 ENV FRONTEND_PORT=${FRONTEND_PORT}

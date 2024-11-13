@@ -1,5 +1,5 @@
 [Unit]
-Description=run next js koonts.net
+Description=run next js mayday.net
 
 [Service]
 Type=simple

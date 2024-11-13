@@ -1,28 +1,28 @@
 volumes:
   data:
 services:
-  mayday:
+  mayday-backend:
 #    network_mode: "host"
-    container_name: mayday
-    hostname: mayday
+    container_name: mayday-backend
+    hostname: mayday-backend
     restart: always
+    image: mayday-backend
+    pull_policy: never
     build:
-      tags:
-        - mayday:latest
       context: ../
       dockerfile: docker/app/Dockerfile
     env_file:
       - .env
     ports:
       - "8202:8202"
-  mayday-fe:
+  mayday-frontend:
 #    network_mode: "host"
-    container_name: mayday-fe
-    hostname: mayday-fe
+    container_name: mayday-frontend
+    hostname: mayday-frontend
+    image: mayday-frontend
+    pull_policy: never
     restart: always
     build:
-      tags:
-        - mayday-fe:latest
       context: ../
       dockerfile: docker/frontend/Dockerfile
     env_file:
@@ -31,14 +31,15 @@ services:
       FRONTEND_PORT: $FRONTEND_PORT
     ports:
       - "$FRONTEND_PORT:3000"
-  db:
+  mayday-db:
     container_name: mayday-db
+    hostname: mayday-db
     image: mariadb:latest
+#    image: mayday-db
+#    pull_policy: never
     # https://mariadb.com/kb/en/mariadb-server-docker-official-image-environment-variables/#mariadb_user-mysql_user-mariadb_password_hash-mariadb_password-mysql_password
     restart: always
     build:
-      tags:
-        - mayday-db:latest
       context: ../
       dockerfile: docker/db/Dockerfile
     env_file:

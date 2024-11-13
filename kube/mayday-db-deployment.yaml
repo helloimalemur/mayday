@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mayday
+  labels:
+    app: mayday-db
+  name: mayday-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mayday-db
+  template:
+    metadata:
+      namespace: mayday
+      labels:
+        app: mayday-db
+    spec:
+      containers:
+        - env:
+            - name: BACKEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: BACKEND_PORT
+                  name: env
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: DATABASE_URL
+                  name: env
+            - name: FRONTEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: FRONTEND_PORT
+                  name: env
+            - name: MAYDAY_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MAYDAY_HOST
+                  name: env
+            - name: MAYDAY_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: MAYDAY_PORT
+                  name: env
+            - name: MAYDAY_PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: MAYDAY_PUBLIC_URL
+                  name: env
+            - name: MARIADB_APP_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_APP_PASS
+                  name: env
+            - name: MARIADB_DATABASE
+              value: mayday
+            - name: MARIADB_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_DB
+                  name: env
+            - name: MARIADB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_HOST
+                  name: env
+            - name: MARIADB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_PASS
+                  name: env
+            - name: MARIADB_PASSWORD
+              value: password
+            - name: MARIADB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_PORT
+                  name: env
+            - name: MARIADB_ROOT_PASSWORD
+              value: password
+            - name: MARIADB_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_USER
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_CORS
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_CORS
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_HOST
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_KEY
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_PORT
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_CORS
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_CORS
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_HOST
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_KEY
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_PORT
+                  name: env
+            - name: SQLX_LOGGING
+              valueFrom:
+                configMapKeyRef:
+                  key: SQLX_LOGGING
+                  name: env
+          image: mariadb:latest
+          name: mayday-db
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/mysql/
+              name: host-db-mount
+      restartPolicy: Always
+      volumes:
+        - name: host-db-mount
+          hostPath:
+            path: /var/lib/mayday/mysql/

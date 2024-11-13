@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mayday
+  labels:
+    app: mayday-frontend
+  name: mayday-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mayday-frontend
+  template:
+    metadata:
+      namespace: mayday
+      labels:
+        app: mayday-frontend
+    spec:
+      containers:
+        - env:
+            - name: BACKEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: BACKEND_PORT
+                  name: env
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: DATABASE_URL
+                  name: env
+            - name: FRONTEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: FRONTEND_PORT
+                  name: env
+            - name: MAYDAY_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MAYDAY_HOST
+                  name: env
+            - name: MAYDAY_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: MAYDAY_PORT
+                  name: env
+            - name: MAYDAY_PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: MAYDAY_PUBLIC_URL
+                  name: env
+            - name: MARIADB_APP_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_APP_PASS
+                  name: env
+            - name: MARIADB_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_DB
+                  name: env
+            - name: MARIADB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_HOST
+                  name: env
+            - name: MARIADB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_PASS
+                  name: env
+            - name: MARIADB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_PORT
+                  name: env
+            - name: MARIADB_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: MARIADB_USER
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_CORS
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_CORS
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_HOST
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_KEY
+                  name: env
+            - name: NEXT_PUBLIC_ACTIONS_API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_ACTIONS_API_PORT
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_CORS
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_CORS
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_HOST
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_KEY
+                  name: env
+            - name: NEXT_PUBLIC_BACKEND_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_BACKEND_PORT
+                  name: env
+            - name: SQLX_LOGGING
+              valueFrom:
+                configMapKeyRef:
+                  key: SQLX_LOGGING
+                  name: env
+          image: mayday-frontend
+          imagePullPolicy: Never
+          name: mayday-frontend
+          ports:
+            - containerPort: 9083
+              protocol: TCP
+      hostname: mayday-frontend
+      restartPolicy: Always
