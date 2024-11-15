@@ -127,7 +127,7 @@ k3sdown:
 ############################################
 ## remove all everything
 .PHONY: clean
-clean: down prune cleanfe cleankubenamespace
+clean: cleanfe prune down cleankubenamespace
 	@:
 
 ## remove kube namespace
@@ -147,8 +147,8 @@ cleanfe:
 ## remove only images
 .PHONY: prune
 prune: kubeclean
-	@yes|docker system prune -a
 	@cargo clean
+	@yes|docker system prune -a
 
 ## remove k3s images
 .PHONY: kubeclean
