@@ -6,15 +6,15 @@
 // // PRIMARY KEY (`sessionid`)
 // // ) ENGINE=InnoDB;
 
-use crate::mayday::{MaydayRequest, MaydayRequestType};
+use crate::mayday::{MaydayError, MaydayRequest, MaydayRequestType};
 use crate::session;
 use rand::random;
 use sea_orm::entity::prelude::*;
 use sea_orm::{
-    sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel,
+    ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel,
 };
-use sqlx::types::chrono;
-use sqlx::types::uuid::Timestamp;
+use chrono;
+use log::info;
 use sqlx::Row;
 use utoipa::{OpenApi, ToSchema};
 
@@ -113,7 +113,7 @@ impl MaydayRequest for SessionRequest {
     // "password":"pass",
     // "session_request_type":"Create"
     // }'
-    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         let db = dbcon.clone();
         let rand = random::<u16>();
         if let MaydayRequestType::Session(session) = message {
@@ -125,10 +125,13 @@ impl MaydayRequest for SessionRequest {
                 session_id: ActiveValue::Set(session.session_id),
             };
             let inserted = session.insert(&db).await;
-            println!("{:?}", inserted);
+            info!("{:?}", inserted);
+            Ok("Session created".to_string())
+        } else { 
+            Err(MaydayError::Conflict)
         }
     }
-    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         // let db = dbcon.clone();
         // let rand = random::<u16>();
         // let mut session = session::ActiveModel {
@@ -140,8 +143,9 @@ impl MaydayRequest for SessionRequest {
         // };
         // let inserted = session(&db).await;
         // println!("{:?}", inserted);
+        Ok("dev".to_string())
     }
-    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         // let db = dbcon.clone();
         // let rand = random::<u16>();
         // let mut session = session::ActiveModel {
@@ -153,8 +157,9 @@ impl MaydayRequest for SessionRequest {
         // };
         // let inserted = session.insert(&db).await;
         // println!("{:?}", inserted);
+        Ok("dev".to_string())
     }
-    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         // let db = dbcon.clone();
         // let rand = random::<u16>();
         // let mut session = session::ActiveModel {
@@ -166,5 +171,6 @@ impl MaydayRequest for SessionRequest {
         // };
         // let inserted = session.insert(&db).await;
         // println!("{:?}", inserted);
+        Ok("dev".to_string())
     }
 }

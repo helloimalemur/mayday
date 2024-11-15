@@ -9,11 +9,11 @@ use config::Config;
 use maydaylib::appstate::AppState;
 use maydaylib::load_keys_from_file;
 use maydaylib::*;
-use pnet::datalink;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
+use migration::{Migrator, MigratorTrait};
 
 mod database;
 mod logger;
@@ -48,6 +48,8 @@ async fn main() {
     //     .unwrap();
 
     let db = wait_for_db().await;
+
+    Migrator::up(&db, None).await.expect("unable to migrate database");
 
     let state = Data::new(Mutex::new(AppState::new(
         load_keys_from_file(),

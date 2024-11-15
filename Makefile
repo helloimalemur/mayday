@@ -198,7 +198,7 @@ dbstatus:
 ## connect to database
 .PHONY: dbconn
 dbconn:
-	@mariadb -u ${MARIADB_USER} -h ${MARIADB_HOST} -p${MARIADB_PASS}
+	@mariadb -P${MARIADB_PORT} -u ${MARIADB_USER} -h ${MARIADB_HOST} -p${MARIADB_PASS}
 
 ## Dependencies
 .PHONY: install-node

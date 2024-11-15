@@ -1,15 +1,16 @@
-use crate::mayday::{MaydayRequest, MaydayRequestType};
+use actix_web::Error;
+use actix_web::error::ErrorConflict;
+use crate::mayday::{MaydayError, MaydayRequest, MaydayRequestType};
 use crate::{session, user};
 use rand::random;
 use sea_orm::entity::prelude::*;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{
-    sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeleteResult,
-    DeriveEntityModel, QueryTrait,
-};
-use sqlx::types::chrono;
+use sea_orm::{ActiveModelBehavior, ActiveModelTrait, ActiveValue, ColIdx, DatabaseConnection, DeleteResult, DeriveEntityModel, QueryTrait};
+use chrono::Local;
 use sqlx::Row;
 use utoipa::{OpenApi, ToSchema};
+use log::info;
+use crate::mayday::MaydayError::Unauthorized;
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
@@ -63,7 +64,7 @@ pub struct UserRequest {
 
 impl MaydayRequest for UserRequest {
     async fn process(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
-        match &self.user_request_type {
+        let _ = match &self.user_request_type {
             UserRequestType::Create => self.create(dbcon, message).await,
             UserRequestType::Read => self.read(dbcon, message).await,
             UserRequestType::Update => self.update(dbcon, message).await,
@@ -76,20 +77,47 @@ impl MaydayRequest for UserRequest {
     // "secret":"p1",
     // "user_request_type":"Create"
     // }'
-    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         let db = dbcon.clone();
+        let mut exists = false;
         let rand = random::<u16>();
+        let mut randi = rand as i16;
+        if randi < 0i16 {
+            randi = randi * -1i16;
+        }
         if let MaydayRequestType::User(user) = message {
             let mut user = user::ActiveModel {
                 id: Default::default(),
-                user_id: ActiveValue::Set(rand as i16),
+                user_id: ActiveValue::Set(randi),
                 name: ActiveValue::Set(user.name),
                 email: ActiveValue::Set(user.email),
                 secret: ActiveValue::Set(user.secret),
                 ..Default::default()
             };
-            let inserted = user.insert(&db).await;
-            println!("{:?}", inserted);
+
+            // check if user already exists
+            if let Ok(u) = user::Entity::find()
+                .filter(user::Column::Email.eq(user.clone().email.unwrap().clone()))
+                .one(&dbcon)
+                .await
+            {
+                if let Some(u) = u {
+                    exists = true;
+                }
+            }
+            // create if not already exists
+            let cloned = user.clone();
+            if !exists {
+                if let Ok(_inserted) = user.insert(&db).await {
+                    Ok("Created".to_string())
+                }else {
+                    Err(MaydayError::Conflict)
+                }
+            } else {
+                Err(MaydayError::Conflict)
+            }
+        } else {
+            Err(Unauthorized)
         }
     }
     // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
@@ -98,7 +126,7 @@ impl MaydayRequest for UserRequest {
     // "secret":"p1",
     // "user_request_type":"Read"
     // }'
-    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         let db = dbcon.clone();
         if let MaydayRequestType::User(user) = message {
             if let Ok(u) = user::Entity::find()
@@ -107,7 +135,7 @@ impl MaydayRequest for UserRequest {
                 .one(&dbcon)
                 .await
             {
-                if let Some(u) = u {
+                if let Some(_user) = u {
                     // println!("{:#?}", u);
                     if let Ok(check) = session::Entity::find()
                         .filter(session::Column::Email.eq(user.email.clone()))
@@ -115,26 +143,42 @@ impl MaydayRequest for UserRequest {
                         .await
                     {
                         if let Some(u) = check {
-                            println!("sessionid: {}", u.session_id)
+                            // info!("session exists: {:?}", u);
+                            Ok(u.session_id)
                         } else {
-                            println!("no session");
+                            // println!("no session");
                             let rand = random::<u128>();
                             let new_session = session::ActiveModel {
                                 user_id: Default::default(),
                                 name: ActiveValue::Set(user.name.clone()),
                                 email: ActiveValue::Set(user.email.clone()),
                                 session_id: ActiveValue::Set(rand.to_string()),
-                                timestamp: ActiveValue::Set(chrono::Local::now().timestamp()),
+                                timestamp: ActiveValue::Set(Local::now().timestamp()),
                             };
-                            println!(
-                                "new session token: {}",
-                                new_session.clone().session_id.unwrap()
-                            );
-                            let res = new_session.insert(&db).await;
+                            // println!(
+                            //     "new session token: {}",
+                            //     new_session.clone().session_id.unwrap()
+                            // );
+                            info!("new session token: {:?}", new_session);
+                            let new_session_cloned = new_session.clone();
+                            if let Ok(res) = new_session.insert(&db).await {
+                                let session_id = res.session_id.as_str();
+                                Ok(session_id.parse().unwrap())
+                            } else {
+                                Ok(new_session_cloned.session_id.unwrap())
+                            }
                         }
+                    } else {
+                        Err(Unauthorized)
                     }
+                } else {
+                    Err(Unauthorized)
                 }
+            } else {
+                Err(Unauthorized)
             }
+        } else {
+            Err(Unauthorized)
         }
     }
     // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
@@ -146,7 +190,7 @@ impl MaydayRequest for UserRequest {
     // "new_secret":"p2",
     // "user_request_type":"Update"
     // }'
-    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         let db = dbcon.clone();
         let rand = random::<u16>();
         // Locate user
@@ -163,10 +207,20 @@ impl MaydayRequest for UserRequest {
                     active_user.name = ActiveValue::Set(user.new_name.unwrap());
                     active_user.email = ActiveValue::Set(user.new_email.unwrap());
                     active_user.secret = ActiveValue::Set(user.new_secret.unwrap());
-                    let res: user::Model = active_user.update(&db).await.unwrap();
+                    if let Ok(res) = active_user.update(&db).await {
+                        Ok("User Updated".to_string())
+                    } else {
+                        Err(MaydayError::NotFound)
+                    }
                     // println!("{:?}", res);
+                } else {
+                    Err(Unauthorized)
                 }
+            } else {
+                Err(Unauthorized)
             }
+        } else {
+            Err(Unauthorized)
         }
     }
     // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
@@ -175,7 +229,7 @@ impl MaydayRequest for UserRequest {
     // "secret":"p2",
     // "user_request_type":"Delete"
     // }'
-    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
         let db = dbcon.clone();
         let rand = random::<u16>();
         // Locate user
@@ -200,11 +254,22 @@ impl MaydayRequest for UserRequest {
                         if let Some(s) = session {
                             let mut active_session: session::ActiveModel = s.into();
                             let res = active_session.delete(&dbcon).await.unwrap();
-                            println!("Deleted session: {:?}", res);
+                            info!("Deleted session: {:?}", res);
+                            Ok("Session Deleted".to_string())
+                        } else {
+                            Err(MaydayError::NotFound)
                         }
+                    } else {
+                        Err(MaydayError::NotFound)
                     }
+                } else {
+                    Err(Unauthorized)
                 }
+            } else {
+                Err(Unauthorized)
             }
+        } else {
+            Err(Unauthorized)
         }
     }
 }

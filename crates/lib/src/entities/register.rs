@@ -6,24 +6,14 @@
 // // PRIMARY KEY (`registerid`)
 // // ) ENGINE=InnoDB;
 
-use crate::appstate::AppState;
-use crate::entities::user::User;
-use crate::mayday::{MaydayRequest, MaydayRequestType};
-use crate::user::{UserRequest, UserRequestType};
-use crate::{is_key_valid, register, user};
-use actix_web::error::ErrorBadRequest;
-use actix_web::web::Data;
-use actix_web::{web, HttpRequest};
-use futures_util::StreamExt;
+use crate::mayday::{MaydayError, MaydayRequest, MaydayRequestType};
+use crate::{register};
 use rand::random;
-use rand::Rng;
 use sea_orm::entity::prelude::*;
 use sea_orm::{
-    sqlx, ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel,
+    ActiveModelBehavior, ActiveModelTrait, ActiveValue, DatabaseConnection, DeriveEntityModel,
 };
-use sqlx::mysql::MySqlRow;
-use sqlx::{MySql, Pool, Row};
-use std::sync::Mutex;
+use sqlx::{Row};
 use utoipa::{OpenApi, ToSchema};
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -119,7 +109,7 @@ impl MaydayRequest for RegisterRequest {
     // "password":"pass",
     // "register_request_type":"Create"
     // }'
-    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType)  -> Result<String, MaydayError> {
         let db = dbcon.clone();
         let rand = random::<u16>();
         if let MaydayRequestType::Register(register) = message {
@@ -132,8 +122,9 @@ impl MaydayRequest for RegisterRequest {
             let inserted = register.insert(&db).await;
             println!("{:?}", inserted);
         }
+        Ok("dev".to_string())
     }
-    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType)  -> Result<String, MaydayError> {
         // let db = dbcon.clone();
         // let rand = random::<u16>();
         // let mut register = register::ActiveModel {
@@ -145,8 +136,9 @@ impl MaydayRequest for RegisterRequest {
         // };
         // let inserted = register(&db).await;
         // println!("{:?}", inserted);
+        Ok("dev".to_string())
     }
-    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType)  -> Result<String, MaydayError> {
         // let db = dbcon.clone();
         // let rand = random::<u16>();
         // let mut register = register::ActiveModel {
@@ -158,8 +150,9 @@ impl MaydayRequest for RegisterRequest {
         // };
         // let inserted = register.insert(&db).await;
         // println!("{:?}", inserted);
+        Ok("dev".to_string())
     }
-    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
+    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType)  -> Result<String, MaydayError> {
         // let db = dbcon.clone();
         // let rand = random::<u16>();
         // let mut register = register::ActiveModel {
@@ -171,5 +164,6 @@ impl MaydayRequest for RegisterRequest {
         // };
         // let inserted = register.insert(&db).await;
         // println!("{:?}", inserted);
+        Ok("dev".to_string())
     }
 }

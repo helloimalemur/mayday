@@ -1,9 +1,13 @@
 use crate::register::RegisterRequest;
 use crate::session::SessionRequest;
-use crate::user::{User, UserRequest};
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DeriveRelation, EnumIter};
+use crate::user::{ActiveModel, User, UserRequest};
+use sea_orm::{ActiveModelTrait, ColIdx, DatabaseConnection, DeriveRelation, EnumIter};
 use std::collections::HashMap;
+use std::fmt::{Display, Formatter};
 use std::sync::MutexGuard;
+use actix_web::http::{Error, StatusCode};
+use actix_web::ResponseError;
+use crate::mayday::MaydayError::Conflict;
 
 pub enum MaydayRequestType {
     User(UserRequest),
@@ -11,19 +15,40 @@ pub enum MaydayRequestType {
     Register(RegisterRequest),
 }
 
+#[derive(Debug)]
+pub enum MaydayError {
+    Unimplemented,
+    InvalidSchema,
+    Conflict,
+    Unauthorized,
+    NotFound,
+    BadRequest,
+}
+impl Display for MaydayError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl ResponseError for MaydayError {
+    fn status_code(&self) -> StatusCode {
+        StatusCode::INTERNAL_SERVER_ERROR
+    }
+}
+
 pub trait MaydayRequest {
     async fn process(&self, dbcon: DatabaseConnection, message: MaydayRequestType);
-    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
-        println!("Mayday request");
+    async fn create(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
+        Ok("Unimplemented".parse().unwrap())
     }
-    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
-        println!("Mayday request");
+    async fn read(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
+        Ok("Unimplemented".parse().unwrap())
     }
-    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
-        println!("Mayday request");
+    async fn update(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
+        Ok("Unimplemented".parse().unwrap())
     }
-    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) {
-        println!("Mayday request");
+    async fn delete(&self, dbcon: DatabaseConnection, message: MaydayRequestType) -> Result<String, MaydayError> {
+        Ok("Unimplemented".parse().unwrap())
     }
 }
 

@@ -6,7 +6,7 @@ use actix_web::{web, HttpRequest};
 use futures_util::StreamExt;
 use maydaylib::appstate::AppState;
 use maydaylib::is_key_valid;
-use maydaylib::mayday::{MaydayRequest, MaydayRequestType};
+use maydaylib::mayday::{MaydayError, MaydayRequest, MaydayRequestType};
 use maydaylib::user::{User, UserRequest, UserRequestType};
 use std::sync::Mutex;
 
@@ -28,7 +28,7 @@ pub async fn user(
     mut payload: Payload,
     data: Data<Mutex<AppState>>,
     req: HttpRequest,
-) -> String {
+) -> Result<String, MaydayError> {
     const MAX_SIZE: usize = 262_144; // max payload size is 256k
     let mut auth = false;
     let mut key = String::new();
@@ -55,7 +55,7 @@ pub async fn user(
             let chunk = chunk.unwrap();
             // limit max size of in-memory payload
             if (body.len() + chunk.len()) > MAX_SIZE {
-                return ErrorBadRequest("overflow").to_string();
+                return Err(MaydayError::BadRequest)
             }
             body.extend_from_slice(&chunk);
         }
@@ -68,7 +68,7 @@ pub async fn user(
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
                 // "email":"john",
-                // "password":"pss",
+                // "secret":"pss",
                 // "user_request_type":"Create"
                 // }'
                 UserRequestType::Create => {
@@ -76,12 +76,12 @@ pub async fn user(
                     let db_conn = app_state.db_pool.clone();
                     message
                         .create(db_conn, MaydayRequestType::User(message.clone()))
-                        .await
+                        .await?
                 }
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
                 // "email":"john",
-                // "password":"pss",
+                // "secret":"pss",
                 // "user_request_type":"Read"
                 // }'
                 UserRequestType::Read => {
@@ -89,12 +89,12 @@ pub async fn user(
                     let db_conn = app_state.db_pool.clone();
                     message
                         .read(db_conn, MaydayRequestType::User(message.clone()))
-                        .await
+                        .await?
                 }
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
                 // "email":"john",
-                // "password":"pss",
+                // "secret":"pss",
                 // "user_request_type":"Update"
                 // }'
                 UserRequestType::Update => {
@@ -102,12 +102,12 @@ pub async fn user(
                     let db_conn = app_state.db_pool.clone();
                     message
                         .update(db_conn, MaydayRequestType::User(message.clone()))
-                        .await
+                        .await?
                 }
                 // curl -XPOST -H'X-API-KEY: somekey' localhost:8202/user -d '{
                 // "name":"test@gmail.com",
                 // "email":"john",
-                // "password":"pss",
+                // "secret":"pss",
                 // "user_request_type":"Delete"
                 // }'
                 UserRequestType::Delete => {
@@ -115,11 +115,11 @@ pub async fn user(
                     let db_conn = app_state.db_pool.clone();
                     message
                         .delete(db_conn, MaydayRequestType::User(message.clone()))
-                        .await
+                        .await?
                 }
             };
 
-            response
+            Ok(response)
         } else {
             let message = format!(
                 "FAIL to deserialize: {} {} {}",
@@ -128,11 +128,11 @@ pub async fn user(
                 String::from_utf8(body.to_vec()).unwrap()
             );
             logger::log(Header::WARNING, message.as_str());
-            "invalid schema\n".to_string()
+            Err(MaydayError::InvalidSchema)
         }
     } else {
         let message = format!("INVALID API {} {} {}", req.method(), req.uri(), key);
         logger::log(Header::WARNING, message.as_str());
-        "invalid api key\n".to_string()
+        Err(MaydayError::Unauthorized)
     }
 }
